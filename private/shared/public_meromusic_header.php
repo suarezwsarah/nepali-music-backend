@@ -12,6 +12,8 @@
     <script src="<?php echo url_for('/ckeditor/ckeditor.js')?>"></script>
     <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
     <script src="<?php echo get_js('meromusic'); ?>"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 
 </head>
 <body>

@@ -82,6 +82,7 @@ function display_my_errors($errors = array()) {
   return $output;
 }
 
+
 function get_and_clear_session_message() {
   if(isset($_SESSION['message']) && $_SESSION['message'] != '') {
     $msg = $_SESSION['message'];

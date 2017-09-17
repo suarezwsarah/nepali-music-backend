@@ -1,6 +1,7 @@
 <?php require_once('../private/initialize.php'); ?>
 <?php require_login(); ?>
 
+
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
 
 <div class="row">
@@ -41,13 +42,18 @@
                     </tr>
                     </thead>
                     <tbody>
+                    <?php $all_categories = find_all_categories(); ?>
+                    <?php while ($category = mysqli_fetch_assoc($all_categories)) { ?>
                         <tr>
-                            <td>Name</td>
-                            <td><a href="" class="btn btn-primary">Edit</a>
+                            <td><?php echo $category['name']?></td>
+                            <?php $url = url_for('edit_cat.php') . '?id=' . $category['id']; ?>
+                            <td><a href="<?php echo $url; ?>" class="btn btn-primary">Edit</a>
                                 <a href="?cat_id=" class="btn btn-default"
                                    onclick="return confirm('Are you sure you want to delete this category and related songs?');">Delete</a>
                             </td>
                         </tr>
+                    <?php } ?>
+                    <?php mysqli_free_result($all_categories); ?>
                     </tbody>
                 </table>
             </div>

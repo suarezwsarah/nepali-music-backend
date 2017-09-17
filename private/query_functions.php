@@ -612,4 +612,85 @@
     }
   }
 
+  function find_all_categories() {
+    global $db;
+    $sql = "SELECT * FROM category";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    return $result;
+  }
+
+  function find_category_by_id($id) {
+    global $db;
+    $sql = "SELECT * FROM category ";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    $category = mysqli_fetch_assoc($result);
+    mysqli_free_result($result);
+    return $category;
+  }
+
+
+  function update_table($table_name, $fields) {
+    global $db;
+    $sql = "UPDATE ${table_name} SET ";
+    foreach ($fields as $field_name =>  $field_value) {
+      if ($field_name != 'id') {
+          $clean_field_name = db_escape($db, $field_name);
+          $clean_field_value = db_escape($db, $field_value);
+          $sql .= $clean_field_name . " = " . "'${clean_field_value}' ";
+      }
+    }
+    $sql .= "WHERE id = " . db_escape($db,$fields['id']) . ' ';
+    $sql .= "LIMIT 1";
+    $result = mysqli_query($db, $sql);
+    if ($result) {
+      return true;
+    } else {
+      echo mysqli_error($db);
+      db_disconnect($db);
+      exit;
+    }
+  }
+
+  function insert_table($table_name, $fields) {
+      global $db;
+      $sql = "INSERT INTO ${table_name} (";
+      $field_names = array_keys($fields);
+
+      foreach ($field_names as $field_name) {
+        $sql .= $field_name . ',';
+      }
+
+      $last_comma_position = strrpos($sql, ',');
+      $sql = substr($sql, 0, $last_comma_position);
+
+      $sql .= ")";
+
+      $sql .= ' VALUES (';
+
+      $field_values = array_values($fields);
+
+      foreach ($field_values as $field_value) {
+          $sql .= "'". db_escape($db, $field_value) . "',";
+      }
+
+      $last_comma_position = strrpos($sql, ',');
+      $sql = substr($sql, 0, $last_comma_position);
+
+      $sql .= ')';
+
+      $result = mysqli_query($db, $sql);
+
+      if ($result) {
+        return true;
+      } else {
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
+      }
+
+  }
+
 ?>
