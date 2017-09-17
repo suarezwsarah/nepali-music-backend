@@ -8,6 +8,18 @@ function url_for($script_path) {
   return WWW_ROOT . $script_path;
 }
 
+function get_stylesheet($filename) {
+  return url_for('/stylesheets/' . $filename . '.css');
+}
+
+function get_img($filename) {
+  return url_for('/images/' . $filename);
+}
+
+function get_js($filename) {
+  return url_for('/js/' . $filename . '.js');
+}
+
 function u($string="") {
   return urlencode($string);
 }
@@ -54,6 +66,18 @@ function display_errors($errors=array()) {
     }
     $output .= "</ul>";
     $output .= "</div>";
+  }
+  return $output;
+}
+
+function display_my_errors($errors = array()) {
+  $output = '';
+  if (!empty($errors)) {
+    $output .= '<div class="alert alert-danger  alert-dismissible" role="alert">';
+    foreach ($errors as $error) {
+          $output .= "<p> ${error} </p>";
+    }
+    $output .= '</div>';
   }
   return $output;
 }
