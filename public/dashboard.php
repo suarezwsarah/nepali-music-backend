@@ -1,6 +1,6 @@
 <?php require_once('../private/initialize.php'); ?>
 
-<?php require_login() ?>
+<?php require_login(); ?>
 
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
 

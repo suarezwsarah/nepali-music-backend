@@ -28,12 +28,12 @@
                         <div class="title">Dashboard</div>
                     </a>
                 </li>
-                <li><a href="#">
+                <li><a href="<?php echo url_for('manage_cat.php'); ?>">
                         <div class="icon"> <i class="fa fa-sitemap" aria-hidden="true"></i> </div>
                         <div class="title">Categories</div>
                     </a>
                 </li>
-                <li> <a href="manage_artist.php">
+                <li> <a href="#">
                         <div class="icon"> <i class="fa fa-buysellads" aria-hidden="true"></i> </div>
                         <div class="title">Artist</div>
                     </a>
