@@ -10,6 +10,8 @@
     <link rel="stylesheet" media="all" href="<?php echo get_stylesheet('theme/yellow'); ?>" />
 
     <script src="<?php echo url_for('/ckeditor/ckeditor.js')?>"></script>
+    <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
+    <script src="<?php echo get_js('meromusic'); ?>"></script>
 
 </head>
 <body>
@@ -19,13 +21,14 @@
             <button type="button" class="sidebar-toggle"> <i class="fa fa-times"></i> </button>
         </div>
         <div class="sidebar-menu">
-            <ul class="sidebar-nav">
-                <li class="active"> <a href="home.php">
+            <ul class="sidebar-nav" id="navBar">
+                <li class="active">
+                    <a href="#">
                         <div class="icon"> <i class="fa fa-dashboard" aria-hidden="true"></i> </div>
                         <div class="title">Dashboard</div>
                     </a>
                 </li>
-                <li><a href="manage_category.php">
+                <li><a href="#">
                         <div class="icon"> <i class="fa fa-sitemap" aria-hidden="true"></i> </div>
                         <div class="title">Categories</div>
                     </a>

@@ -24,8 +24,7 @@
 <link rel="stylesheet" type="text/css" href="assets/css/theme/blue.css">
 <link rel="stylesheet" type="text/css" href="assets/css/theme/red.css">
 <link rel="stylesheet" type="text/css" href="assets/css/theme/yellow.css">
-
- <script src="assets/ckeditor/ckeditor.js"></script>
+    <script src="assets/ckeditor/ckeditor.js"></script>
 
 </head>
 <body>
