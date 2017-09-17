@@ -13,7 +13,7 @@
 				 DEFINE ('DB_USER', 'root');
 				 DEFINE ('DB_PASSWORD', '');
 				 DEFINE ('DB_HOST', 'localhost'); //host name depends on server
-				 DEFINE ('DB_NAME', 'droid_nepali_music');
+				 DEFINE ('DB_NAME', 'meromusic');
 		}
 		else
 		{
