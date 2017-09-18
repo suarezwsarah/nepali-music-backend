@@ -98,4 +98,8 @@ function display_session_message() {
   }
 }
 
+function trimed_array($arr = array()) {
+  return array_map('trim', $arr);
+}
+
 ?>

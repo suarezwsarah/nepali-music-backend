@@ -12,12 +12,19 @@ $succeed_msg = '';
 if (is_post_request()) {
     $mp3 = $_POST;
     // Remove all the spaces of element inside array
-    $artists = array_map('trim', $_POST['mp3_artist']);
+    $artists = trimed_array($_POST['mp3_artist']);
     $mp3_id = db_escape($db, $_POST['id']);
     $update_artist =  update_artists($mp3_id, $artists);
     if (!$update_artist) {
         $errors[] = 'Failed to update artists';
+    } else {
+        do_audit_log('INFO', "${_SESSION['username']} updated artists");
     }
+
+    // update categories
+    $categories = trimed_array($_POST['cat_ids']);
+
+
 
 } else {
     $id = $_GET['id'];
@@ -26,6 +33,8 @@ if (is_post_request()) {
 
     // Used to populate artist select dropdown
     $all_artists = find_all_from('artist');
+
+    $all_categories = find_all_from('category');
 
 }
 
@@ -61,19 +70,15 @@ if (is_post_request()) {
                             <div class="form-group">
                                 <label class="col-md-3 control-label">Category :-</label>
                                 <div class="col-md-6">
-                                    <select name="cat_id" id="cat_id" class="select2">
+                                    <select name="cat_ids[]" id="cat_id" class="select2" multiple required>
                                         <option value="">--Select Category--</option>
 
-                                        <option value="1">Folk</option>
+                                        <?php while ($category = mysqli_fetch_assoc($all_categories)) { ?>
+                                            <option value="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></option>
+                                        <?php } ?>
 
-                                        <option value="4">Modern</option>
-
-                                        <option value="3">Movie Music</option>
-
-                                        <option value="2">Pop songs</option>
-
-                                        <!--                                        <option value="7" selected>Uncategorized</option>
-                                        -->                                    </select>
+                                        <?php mysqli_free_result($all_categories); ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">

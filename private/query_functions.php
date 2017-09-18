@@ -781,52 +781,76 @@ function delete_from($table_name, $id_col_name, $id)
     }
 }
 
+function get_array_key_by_value($input_value, $inputs = array())
+{
+  foreach ($inputs as $key => $value) {
+    $value = trim($value);
+    $input_value = trim($input_value);
+    if ($value == $input_value) {
+      return $key;
+    }
+  }
+  return '';
+}
+
+function update_junction_table($input = array())
+{
+  global $db;
+  $search_field = $input['search_field'];
+  $search_table = $input['search_tbl'];
+  $search_id = $input['search_id'];
+  $primary_search_col_nm = $input['primary_search_col_nm'];
+
+  $sql = "SELECT ${search_field} FROM ${search_table} WHERE ${primary_search_col_nm} = ${search_id}";
+  $result = mysqli_query($db, $sql);
+  confirm_result_set($result);
+
+  $user_selected_fields = $input['user_selected_fields'];
+
+  while ($row = mysqli_fetch_assoc($result)) {
+    if ($row != null && $row[$search_field] != null) {
+      if (!in_array($row[$search_field], $user_selected_fields)) {
+        $delete_row = delete_from($search_table, $search_field, $row[$search_field]);
+        if ($delete_row) {
+            $log_msg = "${_SESSION['username']} remove ${search_field} ${row['artist_id']} from ${search_table} table";
+            do_audit_log('INFO', $log_msg);
+        }
+      }
+    }
+  }
+
+  mysqli_free_result($result);
+
+  $ret_result = true;
+  foreach ($user_selected_fields as $user_selected_field) {
+      $id = db_escape($db, $user_selected_field);
+      $sql = "SELECT id  FROM ${search_table} WHERE ${primary_search_col_nm} = ${search_id} AND ${search_field} = ${id}";
+      $result = mysqli_query($db, $sql);
+      confirm_result_set($result);
+      $row = mysqli_fetch_assoc($result);
+      mysqli_free_result($result);
+      if ($row == null) {
+          $fields = [$primary_search_col_nm => $search_id, $search_field => $user_selected_field];
+          $insert_result =  insert_table($search_table, $fields);
+          if (!$insert_result) {
+              $ret_result = false;
+          }
+      }
+  }
+  return $ret_result;
+}
+
 function update_artists($mp3_id, $artists = array())
 {
-    /*
-     *  Loop thru each artist and check if same $mp3_id and current artist exists
-     *  if artist and mp3 id exists inside mp3_artist, it means we need not update
-     *  the value. If it is already not there, it means a user added a new artist to
-     *  the existing mp3. In this case we insert the mp3_id and artist_id into mp3_artist table
-     */
-    global $db;
+    $input = [
+        'search_field' => 'artist_id',
+        'search_tbl' => 'mp3_artist',
+        'search_id' => $mp3_id,
+        'primary_search_col_nm' => 'mp3_id',
+        'user_selected_fields' => $artists
+    ];
 
-    // first delete the artist that are not presented inside artists array because it means user remove them from UI
-    $sql = "SELECT artist_id FROM mp3_artist WHERE mp3_id = ${mp3_id}";
-    $result = mysqli_query($db, $sql);
-    confirm_result_set($result);
-    while ($row = mysqli_fetch_assoc($result)) {
-        if ($row != null && $row['artist_id'] != null) {
-            if (!in_array($row['artist_id'], $artists)) {
-                // if the current row is not in the $artists then it means user deleted the artist so remove it from DB
-                $deleted_artist = delete_from('mp3_artist', 'artist_id', $row['artist_id']);
-                if ($deleted_artist) {
-                    $log_msg = "${_SESSION['username']} remove artist_id ${row['artist_id']} from mp3_artist table";
-                    do_audit_log('INFO', $log_msg);
-                }
-            }
-        }
-
-    }
-    mysqli_free_result($result);
-
-    $ret_result = true;
-    foreach ($artists as $artist) {
-        $artist_id = db_escape($db, $artist);
-        $sql = "SELECT id  FROM mp3_artist WHERE mp3_id = ${mp3_id} AND artist_id = ${artist_id}";
-        $result = mysqli_query($db, $sql);
-        confirm_result_set($result);
-        $row = mysqli_fetch_assoc($result);
-        mysqli_free_result($result);
-        if ($row == null) {
-            $fields = ['mp3_id' => $mp3_id, 'artist_id' => $artist_id];
-            $insert_result =  insert_table('mp3_artist', $fields);
-            if (!$insert_result) {
-                $ret_result = false;
-            }
-        }
-    }
-    return $ret_result;
+    return update_junction_table($input);
 }
 
 // Log related function
