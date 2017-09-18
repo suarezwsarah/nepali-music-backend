@@ -17,22 +17,22 @@ if (is_post_request()) {
     $password = $_POST['password'] ?? '';
 
     // Validations
-    if(is_blank($username)) {
+    if (is_blank($username)) {
         $errors[] = "Username cannot be blank.";
     }
-    if(is_blank($password)) {
+    if (is_blank($password)) {
         $errors[] = "Password cannot be blank.";
     }
 
     // if there were no errors, try to login
-    if(empty($errors)) {
+    if (empty($errors)) {
         // Using one variable ensures that msg is the same
         $login_failure_msg = "Log in was unsuccessful.";
 
         $admin = find_admin_by_username($username);
-        if($admin) {
+        if ($admin) {
 
-            if(password_verify($password, $admin['hashed_password'])) {
+            if (password_verify($password, $admin['hashed_password'])) {
                 // password matches
                 log_in_admin($admin);
                 redirect_to(url_for('dashboard.php'));
@@ -58,8 +58,8 @@ if (is_post_request()) {
 <head>
     <meta name="author" content="">
     <meta name="description" content="">
-    <meta http-equiv="Content-Type"content="text/html;charset=UTF-8"/>
-    <meta name="viewport"content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mero Music</title>
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/vendor.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/flat-admin.css'); ?>">
@@ -99,11 +99,15 @@ if (is_post_request()) {
                             <div class="input-group" style="border:0px;">
                                 <?php echo display_my_errors($errors); ?>
                             </div>
-                            <div class="input-group"> <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-user" aria-hidden="true"></i></span>
-                                <input type="text" name="username" id="username" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+                            <div class="input-group"><span class="input-group-addon" id="basic-addon1"> <i
+                                            class="fa fa-user" aria-hidden="true"></i></span>
+                                <input type="text" name="username" id="username" class="form-control"
+                                       placeholder="Username" aria-describedby="basic-addon1">
                             </div>
-                            <div class="input-group"> <span class="input-group-addon" id="basic-addon2"> <i class="fa fa-key" aria-hidden="true"></i></span>
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-describedby="basic-addon2">
+                            <div class="input-group"><span class="input-group-addon" id="basic-addon2"> <i
+                                            class="fa fa-key" aria-hidden="true"></i></span>
+                                <input type="password" name="password" id="password" class="form-control"
+                                       placeholder="Password" aria-describedby="basic-addon2">
                             </div>
                             <div class="text-center">
                                 <input type="submit" class="btn btn-success btn-submit" value="Login">

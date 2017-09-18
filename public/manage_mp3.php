@@ -53,7 +53,7 @@ confirm_result_set($results);
 -->
                                     <a href="manage_mp3.php?status_active_id=" title="Change Status"><span class="badge badge-danger badge-icon"><i class="fa fa-check" aria-hidden="true"></i><span>Disable </span></span></a>
                             </td>
-                            <td><a href="edit_mp3.php?mp3_id=" class="btn btn-primary">Edit</a>
+                            <td><a href="edit_mp3.php?id=<?php echo $result['id'] ?>" class="btn btn-primary">Edit</a>
                                 <a href="?mp3_id=" class="btn btn-default" onclick="return confirm('Are you sure you want to delete this song?');">Delete</a></td>
                         </tr>
                     <?php } // end while ?>

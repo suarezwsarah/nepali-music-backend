@@ -1,32 +1,35 @@
 <?php
 
-  // Subjects
 
-  function find_all_subjects($options=[]) {
+// Subjects
+
+function find_all_subjects($options = [])
+{
     global $db;
 
     $visible = $options['visible'] ?? false;
 
     $sql = "SELECT * FROM subjects ";
-    if($visible) {
-      $sql .= "WHERE visible = true ";
+    if ($visible) {
+        $sql .= "WHERE visible = true ";
     }
     $sql .= "ORDER BY position ASC";
     //echo $sql;
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     return $result;
-  }
+}
 
-  function find_subject_by_id($id, $options=[]) {
+function find_subject_by_id($id, $options = [])
+{
     global $db;
 
     $visible = $options['visible'] ?? false;
 
     $sql = "SELECT * FROM subjects ";
     $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
-    if($visible) {
-      $sql .= "AND visible = true";
+    if ($visible) {
+        $sql .= "AND visible = true";
     }
     // echo $sql;
     $result = mysqli_query($db, $sql);
@@ -34,44 +37,46 @@
     $subject = mysqli_fetch_assoc($result);
     mysqli_free_result($result);
     return $subject; // returns an assoc. array
-  }
+}
 
-  function validate_subject($subject) {
+function validate_subject($subject)
+{
     $errors = [];
 
     // menu_name
-    if(is_blank($subject['menu_name'])) {
-      $errors[] = "Name cannot be blank.";
-    } elseif(!has_length($subject['menu_name'], ['min' => 2, 'max' => 255])) {
-      $errors[] = "Name must be between 2 and 255 characters.";
+    if (is_blank($subject['menu_name'])) {
+        $errors[] = "Name cannot be blank.";
+    } elseif (!has_length($subject['menu_name'], ['min' => 2, 'max' => 255])) {
+        $errors[] = "Name must be between 2 and 255 characters.";
     }
 
     // position
     // Make sure we are working with an integer
-    $postion_int = (int) $subject['position'];
-    if($postion_int <= 0) {
-      $errors[] = "Position must be greater than zero.";
+    $postion_int = (int)$subject['position'];
+    if ($postion_int <= 0) {
+        $errors[] = "Position must be greater than zero.";
     }
-    if($postion_int > 999) {
-      $errors[] = "Position must be less than 999.";
+    if ($postion_int > 999) {
+        $errors[] = "Position must be less than 999.";
     }
 
     // visible
     // Make sure we are working with a string
-    $visible_str = (string) $subject['visible'];
-    if(!has_inclusion_of($visible_str, ["0","1"])) {
-      $errors[] = "Visible must be true or false.";
+    $visible_str = (string)$subject['visible'];
+    if (!has_inclusion_of($visible_str, ["0", "1"])) {
+        $errors[] = "Visible must be true or false.";
     }
 
     return $errors;
-  }
+}
 
-  function insert_subject($subject) {
+function insert_subject($subject)
+{
     global $db;
 
     $errors = validate_subject($subject);
-    if(!empty($errors)) {
-      return $errors;
+    if (!empty($errors)) {
+        return $errors;
     }
 
     shift_subject_positions(0, $subject['position']);
@@ -85,22 +90,23 @@
     $sql .= ")";
     $result = mysqli_query($db, $sql);
     // For INSERT statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // INSERT failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // INSERT failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function update_subject($subject) {
+function update_subject($subject)
+{
     global $db;
 
     $errors = validate_subject($subject);
-    if(!empty($errors)) {
-      return $errors;
+    if (!empty($errors)) {
+        return $errors;
     }
 
     $old_subject = find_subject_by_id($subject['id']);
@@ -116,18 +122,19 @@
 
     $result = mysqli_query($db, $sql);
     // For UPDATE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // UPDATE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // UPDATE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
 
-  }
+}
 
-  function delete_subject($id) {
+function delete_subject($id)
+{
     global $db;
 
     $old_subject = find_subject_by_id($id);
@@ -140,60 +147,64 @@
     $result = mysqli_query($db, $sql);
 
     // For DELETE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // DELETE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // DELETE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function shift_subject_positions($start_pos, $end_pos, $current_id=0) {
+function shift_subject_positions($start_pos, $end_pos, $current_id = 0)
+{
     global $db;
 
-    if($start_pos == $end_pos) { return; }
+    if ($start_pos == $end_pos) {
+        return;
+    }
 
     $sql = "UPDATE subjects ";
-    if($start_pos == 0) {
-      // new item, +1 to items greater than $end_pos
-      $sql .= "SET position = position + 1 ";
-      $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
-    } elseif($end_pos == 0) {
-      // delete item, -1 from items greater than $start_pos
-      $sql .= "SET position = position - 1 ";
-      $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
-    } elseif($start_pos < $end_pos) {
-      // move later, -1 from items between (including $end_pos)
-      $sql .= "SET position = position - 1 ";
-      $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
-      $sql .= "AND position <= '" . db_escape($db, $end_pos) . "' ";
-    } elseif($start_pos > $end_pos) {
-      // move earlier, +1 to items between (including $end_pos)
-      $sql .= "SET position = position + 1 ";
-      $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
-      $sql .= "AND position < '" . db_escape($db, $start_pos) . "' ";
+    if ($start_pos == 0) {
+        // new item, +1 to items greater than $end_pos
+        $sql .= "SET position = position + 1 ";
+        $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
+    } elseif ($end_pos == 0) {
+        // delete item, -1 from items greater than $start_pos
+        $sql .= "SET position = position - 1 ";
+        $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
+    } elseif ($start_pos < $end_pos) {
+        // move later, -1 from items between (including $end_pos)
+        $sql .= "SET position = position - 1 ";
+        $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
+        $sql .= "AND position <= '" . db_escape($db, $end_pos) . "' ";
+    } elseif ($start_pos > $end_pos) {
+        // move earlier, +1 to items between (including $end_pos)
+        $sql .= "SET position = position + 1 ";
+        $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
+        $sql .= "AND position < '" . db_escape($db, $start_pos) . "' ";
     }
     // Exclude the current_id in the SQL WHERE clause
     $sql .= "AND id != '" . db_escape($db, $current_id) . "' ";
 
     $result = mysqli_query($db, $sql);
     // For UPDATE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // UPDATE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // UPDATE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
 
-  // Pages
+// Pages
 
-  function find_all_pages() {
+function find_all_pages()
+{
     global $db;
 
     $sql = "SELECT * FROM pages ";
@@ -201,76 +212,79 @@
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     return $result;
-  }
+}
 
-  function find_page_by_id($id, $options=[]) {
+function find_page_by_id($id, $options = [])
+{
     global $db;
 
     $visible = $options['visible'] ?? false;
 
     $sql = "SELECT * FROM pages ";
     $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
-    if($visible) {
-      $sql .= "AND visible = true";
+    if ($visible) {
+        $sql .= "AND visible = true";
     }
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     $page = mysqli_fetch_assoc($result);
     mysqli_free_result($result);
     return $page; // returns an assoc. array
-  }
+}
 
-  function validate_page($page) {
+function validate_page($page)
+{
     $errors = [];
 
     // subject_id
-    if(is_blank($page['subject_id'])) {
-      $errors[] = "Subject cannot be blank.";
+    if (is_blank($page['subject_id'])) {
+        $errors[] = "Subject cannot be blank.";
     }
 
     // menu_name
-    if(is_blank($page['menu_name'])) {
-      $errors[] = "Name cannot be blank.";
-    } elseif(!has_length($page['menu_name'], ['min' => 2, 'max' => 255])) {
-      $errors[] = "Name must be between 2 and 255 characters.";
+    if (is_blank($page['menu_name'])) {
+        $errors[] = "Name cannot be blank.";
+    } elseif (!has_length($page['menu_name'], ['min' => 2, 'max' => 255])) {
+        $errors[] = "Name must be between 2 and 255 characters.";
     }
     $current_id = $page['id'] ?? '0';
-    if(!has_unique_page_menu_name($page['menu_name'], $current_id)) {
-      $errors[] = "Menu name must be unique.";
+    if (!has_unique_page_menu_name($page['menu_name'], $current_id)) {
+        $errors[] = "Menu name must be unique.";
     }
 
 
     // position
     // Make sure we are working with an integer
-    $postion_int = (int) $page['position'];
-    if($postion_int <= 0) {
-      $errors[] = "Position must be greater than zero.";
+    $postion_int = (int)$page['position'];
+    if ($postion_int <= 0) {
+        $errors[] = "Position must be greater than zero.";
     }
-    if($postion_int > 999) {
-      $errors[] = "Position must be less than 999.";
+    if ($postion_int > 999) {
+        $errors[] = "Position must be less than 999.";
     }
 
     // visible
     // Make sure we are working with a string
-    $visible_str = (string) $page['visible'];
-    if(!has_inclusion_of($visible_str, ["0","1"])) {
-      $errors[] = "Visible must be true or false.";
+    $visible_str = (string)$page['visible'];
+    if (!has_inclusion_of($visible_str, ["0", "1"])) {
+        $errors[] = "Visible must be true or false.";
     }
 
     // content
-    if(is_blank($page['content'])) {
-      $errors[] = "Content cannot be blank.";
+    if (is_blank($page['content'])) {
+        $errors[] = "Content cannot be blank.";
     }
 
     return $errors;
-  }
+}
 
-  function insert_page($page) {
+function insert_page($page)
+{
     global $db;
 
     $errors = validate_page($page);
-    if(!empty($errors)) {
-      return $errors;
+    if (!empty($errors)) {
+        return $errors;
     }
 
     shift_page_positions(0, $page['position'], $page['subject_id']);
@@ -286,22 +300,23 @@
     $sql .= ")";
     $result = mysqli_query($db, $sql);
     // For INSERT statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // INSERT failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // INSERT failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function update_page($page) {
+function update_page($page)
+{
     global $db;
 
     $errors = validate_page($page);
-    if(!empty($errors)) {
-      return $errors;
+    if (!empty($errors)) {
+        return $errors;
     }
 
     $old_page = find_page_by_id($page['id']);
@@ -319,18 +334,19 @@
 
     $result = mysqli_query($db, $sql);
     // For UPDATE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // UPDATE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // UPDATE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
 
-  }
+}
 
-  function delete_page($id) {
+function delete_page($id)
+{
     global $db;
 
     $old_page = find_page_by_id($id);
@@ -343,41 +359,43 @@
     $result = mysqli_query($db, $sql);
 
     // For DELETE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // DELETE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // DELETE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function find_pages_by_subject_id($subject_id, $options=[]) {
+function find_pages_by_subject_id($subject_id, $options = [])
+{
     global $db;
 
     $visible = $options['visible'] ?? false;
 
     $sql = "SELECT * FROM pages ";
     $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
-    if($visible) {
-      $sql .= "AND visible = true ";
+    if ($visible) {
+        $sql .= "AND visible = true ";
     }
     $sql .= "ORDER BY position ASC";
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     return $result;
-  }
+}
 
-  function count_pages_by_subject_id($subject_id, $options=[]) {
+function count_pages_by_subject_id($subject_id, $options = [])
+{
     global $db;
 
     $visible = $options['visible'] ?? false;
 
     $sql = "SELECT COUNT(id) FROM pages ";
     $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
-    if($visible) {
-      $sql .= "AND visible = true ";
+    if ($visible) {
+        $sql .= "AND visible = true ";
     }
     $sql .= "ORDER BY position ASC";
     $result = mysqli_query($db, $sql);
@@ -386,32 +404,35 @@
     mysqli_free_result($result);
     $count = $row[0];
     return $count;
-  }
+}
 
-  function shift_page_positions($start_pos, $end_pos, $subject_id, $current_id=0) {
+function shift_page_positions($start_pos, $end_pos, $subject_id, $current_id = 0)
+{
     global $db;
 
-    if($start_pos == $end_pos) { return; }
+    if ($start_pos == $end_pos) {
+        return;
+    }
 
     $sql = "UPDATE pages ";
-    if($start_pos == 0) {
-      // new item, +1 to items greater than $end_pos
-      $sql .= "SET position = position + 1 ";
-      $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
-    } elseif($end_pos == 0) {
-      // delete item, -1 from items greater than $start_pos
-      $sql .= "SET position = position - 1 ";
-      $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
-    } elseif($start_pos < $end_pos) {
-      // move later, -1 from items between (including $end_pos)
-      $sql .= "SET position = position - 1 ";
-      $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
-      $sql .= "AND position <= '" . db_escape($db, $end_pos) . "' ";
-    } elseif($start_pos > $end_pos) {
-      // move earlier, +1 to items between (including $end_pos)
-      $sql .= "SET position = position + 1 ";
-      $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
-      $sql .= "AND position < '" . db_escape($db, $start_pos) . "' ";
+    if ($start_pos == 0) {
+        // new item, +1 to items greater than $end_pos
+        $sql .= "SET position = position + 1 ";
+        $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
+    } elseif ($end_pos == 0) {
+        // delete item, -1 from items greater than $start_pos
+        $sql .= "SET position = position - 1 ";
+        $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
+    } elseif ($start_pos < $end_pos) {
+        // move later, -1 from items between (including $end_pos)
+        $sql .= "SET position = position - 1 ";
+        $sql .= "WHERE position > '" . db_escape($db, $start_pos) . "' ";
+        $sql .= "AND position <= '" . db_escape($db, $end_pos) . "' ";
+    } elseif ($start_pos > $end_pos) {
+        // move earlier, +1 to items between (including $end_pos)
+        $sql .= "SET position = position + 1 ";
+        $sql .= "WHERE position >= '" . db_escape($db, $end_pos) . "' ";
+        $sql .= "AND position < '" . db_escape($db, $start_pos) . "' ";
     }
     // Exclude the current_id in the SQL WHERE clause
     $sql .= "AND id != '" . db_escape($db, $current_id) . "' ";
@@ -419,21 +440,22 @@
 
     $result = mysqli_query($db, $sql);
     // For UPDATE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // UPDATE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // UPDATE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
 
-  // Admins
+// Admins
 
-  // Find all admins, ordered last_name, first_name
-  function find_all_admins() {
+// Find all admins, ordered last_name, first_name
+function find_all_admins()
+{
     global $db;
 
     $sql = "SELECT * FROM admins ";
@@ -441,9 +463,10 @@
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     return $result;
-  }
+}
 
-  function find_admin_by_id($id) {
+function find_admin_by_id($id)
+{
     global $db;
 
     $sql = "SELECT * FROM admins ";
@@ -454,9 +477,10 @@
     $admin = mysqli_fetch_assoc($result); // find first
     mysqli_free_result($result);
     return $admin; // returns an assoc. array
-  }
+}
 
-  function find_admin_by_username($username) {
+function find_admin_by_username($username)
+{
     global $db;
 
     $sql = "SELECT * FROM admins ";
@@ -467,71 +491,73 @@
     $admin = mysqli_fetch_assoc($result); // find first
     mysqli_free_result($result);
     return $admin; // returns an assoc. array
-  }
+}
 
-  function validate_admin($admin, $options=[]) {
+function validate_admin($admin, $options = [])
+{
 
     $password_required = $options['password_required'] ?? true;
 
-    if(is_blank($admin['first_name'])) {
-      $errors[] = "First name cannot be blank.";
+    if (is_blank($admin['first_name'])) {
+        $errors[] = "First name cannot be blank.";
     } elseif (!has_length($admin['first_name'], array('min' => 2, 'max' => 255))) {
-      $errors[] = "First name must be between 2 and 255 characters.";
+        $errors[] = "First name must be between 2 and 255 characters.";
     }
 
-    if(is_blank($admin['last_name'])) {
-      $errors[] = "Last name cannot be blank.";
+    if (is_blank($admin['last_name'])) {
+        $errors[] = "Last name cannot be blank.";
     } elseif (!has_length($admin['last_name'], array('min' => 2, 'max' => 255))) {
-      $errors[] = "Last name must be between 2 and 255 characters.";
+        $errors[] = "Last name must be between 2 and 255 characters.";
     }
 
-    if(is_blank($admin['email'])) {
-      $errors[] = "Email cannot be blank.";
+    if (is_blank($admin['email'])) {
+        $errors[] = "Email cannot be blank.";
     } elseif (!has_length($admin['email'], array('max' => 255))) {
-      $errors[] = "Last name must be less than 255 characters.";
+        $errors[] = "Last name must be less than 255 characters.";
     } elseif (!has_valid_email_format($admin['email'])) {
-      $errors[] = "Email must be a valid format.";
+        $errors[] = "Email must be a valid format.";
     }
 
-    if(is_blank($admin['username'])) {
-      $errors[] = "Username cannot be blank.";
+    if (is_blank($admin['username'])) {
+        $errors[] = "Username cannot be blank.";
     } elseif (!has_length($admin['username'], array('min' => 8, 'max' => 255))) {
-      $errors[] = "Username must be between 8 and 255 characters.";
+        $errors[] = "Username must be between 8 and 255 characters.";
     } elseif (!has_unique_username($admin['username'], $admin['id'] ?? 0)) {
-      $errors[] = "Username not allowed. Try another.";
+        $errors[] = "Username not allowed. Try another.";
     }
 
-    if($password_required) {
-      if(is_blank($admin['password'])) {
-        $errors[] = "Password cannot be blank.";
-      } elseif (!has_length($admin['password'], array('min' => 12))) {
-        $errors[] = "Password must contain 12 or more characters";
-      } elseif (!preg_match('/[A-Z]/', $admin['password'])) {
-        $errors[] = "Password must contain at least 1 uppercase letter";
-      } elseif (!preg_match('/[a-z]/', $admin['password'])) {
-        $errors[] = "Password must contain at least 1 lowercase letter";
-      } elseif (!preg_match('/[0-9]/', $admin['password'])) {
-        $errors[] = "Password must contain at least 1 number";
-      } elseif (!preg_match('/[^A-Za-z0-9\s]/', $admin['password'])) {
-        $errors[] = "Password must contain at least 1 symbol";
-      }
+    if ($password_required) {
+        if (is_blank($admin['password'])) {
+            $errors[] = "Password cannot be blank.";
+        } elseif (!has_length($admin['password'], array('min' => 12))) {
+            $errors[] = "Password must contain 12 or more characters";
+        } elseif (!preg_match('/[A-Z]/', $admin['password'])) {
+            $errors[] = "Password must contain at least 1 uppercase letter";
+        } elseif (!preg_match('/[a-z]/', $admin['password'])) {
+            $errors[] = "Password must contain at least 1 lowercase letter";
+        } elseif (!preg_match('/[0-9]/', $admin['password'])) {
+            $errors[] = "Password must contain at least 1 number";
+        } elseif (!preg_match('/[^A-Za-z0-9\s]/', $admin['password'])) {
+            $errors[] = "Password must contain at least 1 symbol";
+        }
 
-      if(is_blank($admin['confirm_password'])) {
-        $errors[] = "Confirm password cannot be blank.";
-      } elseif ($admin['password'] !== $admin['confirm_password']) {
-        $errors[] = "Password and confirm password must match.";
-      }
+        if (is_blank($admin['confirm_password'])) {
+            $errors[] = "Confirm password cannot be blank.";
+        } elseif ($admin['password'] !== $admin['confirm_password']) {
+            $errors[] = "Password and confirm password must match.";
+        }
     }
 
     return $errors;
-  }
+}
 
-  function insert_admin($admin) {
+function insert_admin($admin)
+{
     global $db;
 
     $errors = validate_admin($admin);
     if (!empty($errors)) {
-      return $errors;
+        return $errors;
     }
 
     $hashed_password = password_hash($admin['password'], PASSWORD_BCRYPT);
@@ -548,24 +574,25 @@
     $result = mysqli_query($db, $sql);
 
     // For INSERT statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // INSERT failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // INSERT failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function update_admin($admin) {
+function update_admin($admin)
+{
     global $db;
 
     $password_sent = !is_blank($admin['password']);
 
     $errors = validate_admin($admin, ['password_required' => $password_sent]);
     if (!empty($errors)) {
-      return $errors;
+        return $errors;
     }
 
     $hashed_password = password_hash($admin['password'], PASSWORD_BCRYPT);
@@ -574,8 +601,8 @@
     $sql .= "first_name='" . db_escape($db, $admin['first_name']) . "', ";
     $sql .= "last_name='" . db_escape($db, $admin['last_name']) . "', ";
     $sql .= "email='" . db_escape($db, $admin['email']) . "', ";
-    if($password_sent) {
-      $sql .= "hashed_password='" . db_escape($db, $hashed_password) . "', ";
+    if ($password_sent) {
+        $sql .= "hashed_password='" . db_escape($db, $hashed_password) . "', ";
     }
     $sql .= "username='" . db_escape($db, $admin['username']) . "' ";
     $sql .= "WHERE id='" . db_escape($db, $admin['id']) . "' ";
@@ -583,17 +610,18 @@
     $result = mysqli_query($db, $sql);
 
     // For UPDATE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // UPDATE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // UPDATE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function delete_admin($admin) {
+function delete_admin($admin)
+{
     global $db;
 
     $sql = "DELETE FROM admins ";
@@ -602,25 +630,27 @@
     $result = mysqli_query($db, $sql);
 
     // For DELETE statements, $result is true/false
-    if($result) {
-      return true;
+    if ($result) {
+        return true;
     } else {
-      // DELETE failed
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
+        // DELETE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
     }
-  }
+}
 
-  function find_all_categories() {
+function find_all_categories()
+{
     global $db;
     $sql = "SELECT * FROM category";
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     return $result;
-  }
+}
 
-  function find_category_by_id($id) {
+function find_category_by_id($id)
+{
     global $db;
     $sql = "SELECT * FROM category ";
     $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
@@ -629,9 +659,19 @@
     $category = mysqli_fetch_assoc($result);
     mysqli_free_result($result);
     return $category;
-  }
+}
 
-  function find_mp3_by_id($id) {
+function find_all_from($table_name)
+{
+    global $db;
+    $sql = "SELECT * FROM ${table_name}";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    return $result;
+}
+
+function find_mp3_by_id($id)
+{
     global $db;
     $sql = "SELECT * FROM mp3 ";
     $sql .= "WHERE id=" . db_escape($db, $id);
@@ -640,16 +680,17 @@
     $mp3 = mysqli_fetch_assoc($result);
     mysqli_free_result($result);
     return $mp3;
-  }
+}
 
- function find_mp3_artist_by_mp3_id($id) {
+function find_mp3_artist_by_mp3_id($id)
+{
     global $db;
     $artist_sql = "SELECT * FROM mp3_artist WHERE mp3_id=" . db_escape($db, $id);
     $artist_result = mysqli_query($db, $artist_sql);
     confirm_result_set($artist_result);
     $artists_id = [];
     while ($curr_artist = mysqli_fetch_assoc($artist_result)) {
-      $artists_id[] = $curr_artist['artist_id'];
+        $artists_id[] = $curr_artist['artist_id'];
     }
     mysqli_free_result($artist_result);
 
@@ -659,68 +700,132 @@
     $artist_detail_result = mysqli_query($db, $artist_detail_sql);
     confirm_result_set($artist_detail_result);
     return $artist_detail_result;
- }
+}
 
 
-  function update_table($table_name, $fields) {
+function update_table($table_name, $fields)
+{
     global $db;
     $sql = "UPDATE ${table_name} SET ";
-    foreach ($fields as $field_name =>  $field_value) {
-      if ($field_name != 'id') {
-          $clean_field_name = db_escape($db, $field_name);
-          $clean_field_value = db_escape($db, $field_value);
-          $sql .= $clean_field_name . " = " . "'${clean_field_value}' ";
-      }
+    foreach ($fields as $field_name => $field_value) {
+        if ($field_name != 'id') {
+            $clean_field_name = db_escape($db, $field_name);
+            $clean_field_value = db_escape($db, $field_value);
+            $sql .= $clean_field_name . " = " . "'${clean_field_value}' ";
+        }
     }
-    $sql .= "WHERE id = " . db_escape($db,$fields['id']) . ' ';
+    $sql .= "WHERE id = " . db_escape($db, $fields['id']) . ' ';
     $sql .= "LIMIT 1";
     $result = mysqli_query($db, $sql);
     if ($result) {
-      return true;
-    } else {
-      echo mysqli_error($db);
-      db_disconnect($db);
-      exit;
-    }
-  }
-
-  function insert_table($table_name, $fields) {
-      global $db;
-      $sql = "INSERT INTO ${table_name} (";
-      $field_names = array_keys($fields);
-
-      foreach ($field_names as $field_name) {
-        $sql .= $field_name . ',';
-      }
-
-      $last_comma_position = strrpos($sql, ',');
-      $sql = substr($sql, 0, $last_comma_position);
-
-      $sql .= ")";
-
-      $sql .= ' VALUES (';
-
-      $field_values = array_values($fields);
-
-      foreach ($field_values as $field_value) {
-          $sql .= "'". db_escape($db, $field_value) . "',";
-      }
-
-      $last_comma_position = strrpos($sql, ',');
-      $sql = substr($sql, 0, $last_comma_position);
-
-      $sql .= ')';
-
-      $result = mysqli_query($db, $sql);
-
-      if ($result) {
         return true;
-      } else {
+    } else {
         echo mysqli_error($db);
         db_disconnect($db);
         exit;
-      }
+    }
+}
 
-  }
+function insert_table($table_name, $fields)
+{
+    global $db;
+    $sql = "INSERT INTO ${table_name} (";
+    $field_names = array_keys($fields);
+
+    foreach ($field_names as $field_name) {
+        $sql .= $field_name . ',';
+    }
+
+    $last_comma_position = strrpos($sql, ',');
+    $sql = substr($sql, 0, $last_comma_position);
+
+    $sql .= ")";
+
+    $sql .= ' VALUES (';
+
+    $field_values = array_values($fields);
+
+    foreach ($field_values as $field_value) {
+        $sql .= "'" . db_escape($db, $field_value) . "',";
+    }
+
+    $last_comma_position = strrpos($sql, ',');
+    $sql = substr($sql, 0, $last_comma_position);
+
+    $sql .= ')';
+
+    $result = mysqli_query($db, $sql);
+
+    if ($result) {
+        return true;
+    } else {
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
+    }
+
+}
+
+function delete_from($table_name, $id_col_name, $id)
+{
+    global $db;
+    $sql = "DELETE FROM ${table_name} WHERE ${id_col_name} = ${id}";
+    $result = mysqli_query($db, $sql);
+    if ($result) {
+        return true;
+    } else {
+        // DELETE failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
+    }
+}
+
+function update_artists($mp3_id, $artists = array())
+{
+    /*
+     *  Loop thru each artist and check if same $mp3_id and current artist exists
+     *  if artist and mp3 id exists inside mp3_artist, it means we need not update
+     *  the value. If it is already not there, it means a user added a new artist to
+     *  the existing mp3. In this case we insert the mp3_id and artist_id into mp3_artist table
+     */
+    global $db;
+
+    // first delete the artist that are not presented inside artists array because it means user remove them from UI
+    $sql = "SELECT artist_id FROM mp3_artist WHERE mp3_id = ${mp3_id}";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    while ($row = mysqli_fetch_assoc($result)) {
+        if ($row != null && $row['artist_id'] != null) {
+            if (!in_array($row['artist_id'], $artists)) {
+                // if the current row is not in the $artists then it means user deleted the artist so remove it from DB
+                $deleted_artist = delete_from('mp3_artist', 'artist_id', $row['artist_id']);
+                if ($deleted_artist) {
+                    echo 'delete artist ';
+                }
+            }
+        }
+
+    }
+    mysqli_free_result($result);
+
+    $ret_result = true;
+    foreach ($artists as $artist) {
+        $artist_id = db_escape($db, $artist);
+        $sql = "SELECT id  FROM mp3_artist WHERE mp3_id = ${mp3_id} AND artist_id = ${artist_id}";
+        $result = mysqli_query($db, $sql);
+        confirm_result_set($result);
+        $row = mysqli_fetch_assoc($result);
+        mysqli_free_result($result);
+        if ($row == null) {
+            $fields = ['mp3_id' => $mp3_id, 'artist_id' => $artist_id];
+            $insert_result =  insert_table('mp3_artist', $fields);
+            if (!$insert_result) {
+                $ret_result = false;
+            }
+        }
+    }
+    return $ret_result;
+}
 
 ?>
