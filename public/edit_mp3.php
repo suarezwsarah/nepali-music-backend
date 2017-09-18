@@ -11,7 +11,8 @@ $succeed_msg = '';
 
 if (is_post_request()) {
     $mp3 = $_POST;
-    $artists = $_POST['mp3_artist'];
+    // Remove all the spaces of element inside array
+    $artists = array_map('trim', $_POST['mp3_artist']);
     $mp3_id = db_escape($db, $_POST['id']);
     $update_artist =  update_artists($mp3_id, $artists);
     if (!$update_artist) {
