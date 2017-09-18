@@ -7,8 +7,8 @@
 </footer>
 </div>
 </div>
-<script type="text/javascript" src="<?php url_for('/js/vendor.js') ?>"></script>
-<script type="text/javascript" src="<?php url_for('/js/app.js') ?>"> </script>
+<script type="text/javascript" src="<?php echo url_for('/js/vendor.js') ?>"></script>
+<script type="text/javascript" src="<?php echo url_for('/js/app.js') ?>"> </script>
 </body>
 </html>
 

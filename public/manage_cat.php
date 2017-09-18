@@ -14,7 +14,7 @@
                 <div class="col-md-7 col-xs-12">
                     <div class="search_list">
 
-                        <div class="add_btn_primary"><a href="add_category.php?add=yes">Add Category</a></div>
+                        <div class="add_btn_primary"><a href="add_cat.php">Add Category</a></div>
                     </div>
                 </div>
             </div>

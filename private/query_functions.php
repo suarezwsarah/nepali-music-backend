@@ -631,6 +631,36 @@
     return $category;
   }
 
+  function find_mp3_by_id($id) {
+    global $db;
+    $sql = "SELECT * FROM mp3 ";
+    $sql .= "WHERE id=" . db_escape($db, $id);
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    $mp3 = mysqli_fetch_assoc($result);
+    mysqli_free_result($result);
+    return $mp3;
+  }
+
+ function find_mp3_artist_by_mp3_id($id) {
+    global $db;
+    $artist_sql = "SELECT * FROM mp3_artist WHERE mp3_id=" . db_escape($db, $id);
+    $artist_result = mysqli_query($db, $artist_sql);
+    confirm_result_set($artist_result);
+    $artists_id = [];
+    while ($curr_artist = mysqli_fetch_assoc($artist_result)) {
+      $artists_id[] = $curr_artist['artist_id'];
+    }
+    mysqli_free_result($artist_result);
+
+    $separate_artist_with_comma = implode(",", $artists_id);
+
+    $artist_detail_sql = "SELECT * FROM artist WHERE id IN (" . $separate_artist_with_comma . ")";
+    $artist_detail_result = mysqli_query($db, $artist_detail_sql);
+    confirm_result_set($artist_detail_result);
+    return $artist_detail_result;
+ }
+
 
   function update_table($table_name, $fields) {
     global $db;
