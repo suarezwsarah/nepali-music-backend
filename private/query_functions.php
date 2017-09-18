@@ -801,7 +801,8 @@ function update_artists($mp3_id, $artists = array())
                 // if the current row is not in the $artists then it means user deleted the artist so remove it from DB
                 $deleted_artist = delete_from('mp3_artist', 'artist_id', $row['artist_id']);
                 if ($deleted_artist) {
-                    echo 'delete artist ';
+                    $log_msg = "${_SESSION['username']} remove artist_id ${row['artist_id']} from mp3_artist table";
+                    do_audit_log('INFO', $log_msg);
                 }
             }
         }
@@ -826,6 +827,14 @@ function update_artists($mp3_id, $artists = array())
         }
     }
     return $ret_result;
+}
+
+// Log related function
+
+function do_audit_log($log_level, $log_text)
+{
+    $fields = ['log_level' => $log_level, 'log_text' => $log_text];
+    insert_table('log_audit', $fields);
 }
 
 ?>

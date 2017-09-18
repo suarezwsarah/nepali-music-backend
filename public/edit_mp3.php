@@ -29,37 +29,6 @@ if (is_post_request()) {
 
 }
 
-if (is_post_request()) {
-
-    var_dump($_POST);
-
-    /*    $category_id = $_POST['cat_id'];
-        $category_name = $_POST['category_name'];
-
-        if (is_blank($category_id)) {
-            $errors[] = 'Category id is required';
-        }
-
-        if (is_blank($category_name)) {
-            $errors[] = 'Category name cant be blank';
-        }
-
-        if (empty($errors)) {
-            $field = [
-                "id" => $category_id,
-                "name" => $category_name
-            ];
-
-            $update_succeed = update_table('category', $field);
-
-            if ($update_succeed) {
-                $succeed_msg = 'Successfully updated';
-            }
-
-        }*/
-
-}
-
 ?>
 
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
@@ -136,6 +105,8 @@ if (is_post_request()) {
                                         <?php while ($current_artist = mysqli_fetch_assoc($all_artists)) { ?>
                                             <option value="<?php echo $current_artist['id']; ?> "><?php echo $current_artist['first_name']; ?></option>
                                         <?php } ?>
+
+                                        <?php mysqli_free_result($all_artists); ?>
 
                                 </select>
                                 </div>
