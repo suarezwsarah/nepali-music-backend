@@ -34,6 +34,25 @@ if (is_post_request()) {
 
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
 
+<script>
+    (function () {
+        $(document).ready(function () {
+            $("#addMoreCat").click(function (event) {
+                event.preventDefault();
+                var newCatBox = $(document.createElement('div'));
+                $(newCatBox).attr('class', 'form-group');
+                newCatBox.after().html(
+                    '<label class="col-md-3 control-label">Category Name :-</label>' +
+                    '<div class="col-md-6">' +
+                    '    <input type="text" name="category_name" id="category_name" value="" class="form-control" required>' +
+                    '</div>'
+                );
+
+                newCatBox.prependTo("#sectionBody");
+            });
+        });
+    }());
+</script>
 
 <div class="row">
     <div class="col-md-12">
@@ -80,7 +99,7 @@ if (is_post_request()) {
             <div class="card-body mrg_bottom">
                 <form action="add_cat.php" name="addeditcategory" method="post" class="form form-horizontal" enctype="multipart/form-data">
                     <div class="section">
-                        <div class="section-body">
+                        <div class="section-body" id="sectionBody">
                             <div class="form-group">
                                 <label class="col-md-3 control-label">Category Name :-</label>
                                 <div class="col-md-6">
@@ -88,10 +107,11 @@ if (is_post_request()) {
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" id="btnSaveCategory">
                                 <div class="col-md-9 col-md-offset-3">
                                     <button type="submit" name="submit" class="btn btn-primary">Save</button>
-                                </div>
+                                    <button id="addMoreCat" name="add" class="btn btn-primary">Add More</button>
+                               </div>
                             </div>
                         </div>
                     </div>
@@ -102,4 +122,3 @@ if (is_post_request()) {
 </div>
 
 <?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
-
