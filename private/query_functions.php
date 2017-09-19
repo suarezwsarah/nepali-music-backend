@@ -684,24 +684,32 @@ function find_mp3_by_id($id)
 
 function find_mp3_artist_by_mp3_id($id)
 {
-    global $db;
-    $artist_sql = "SELECT * FROM mp3_artist WHERE mp3_id=" . db_escape($db, $id);
-    $artist_result = mysqli_query($db, $artist_sql);
-    confirm_result_set($artist_result);
-    $artists_id = [];
-    while ($curr_artist = mysqli_fetch_assoc($artist_result)) {
-        $artists_id[] = $curr_artist['artist_id'];
-    }
-    mysqli_free_result($artist_result);
-
-    $separate_artist_with_comma = implode(",", $artists_id);
-
-    $artist_detail_sql = "SELECT * FROM artist WHERE id IN (" . $separate_artist_with_comma . ")";
-    $artist_detail_result = mysqli_query($db, $artist_detail_sql);
-    confirm_result_set($artist_detail_result);
-    return $artist_detail_result;
+    return find_by_id('mp3_id', $id, 'mp3_artist', 'artist_id', 'artist');
 }
 
+function find_mp3_category_by_mp3_id($id) {
+    return find_by_id('mp3_id', $id, 'mp3_category', 'category_id', 'category');
+}
+
+function find_by_id($junction_tbl_id_nm, $junction_tbl_id_val, $junction_tbl, $actual_tbl_id, $actual_tbl)
+{
+    global $db;
+    $junction_tbl_id_nm = db_escape($db, $junction_tbl_id_nm);
+    $junction_tbl_id_val = db_escape($db, $junction_tbl_id_val);
+    $sql = "SELECT * FROM ${junction_tbl} WHERE ${junction_tbl_id_nm} = ${junction_tbl_id_val}";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    $ids = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $ids[] = $row[$actual_tbl_id];
+    }
+    mysqli_free_result($result);
+    $actual_tbl_ids = implode(",", $ids);
+    $sql = "SELECT * FROM ${actual_tbl} WHERE id IN (" . $actual_tbl_ids . ")";
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    return $result;
+}
 
 function update_table($table_name, $fields)
 {
@@ -812,7 +820,7 @@ function update_junction_table($input = array())
       if (!in_array($row[$search_field], $user_selected_fields)) {
         $delete_row = delete_from($search_table, $search_field, $row[$search_field]);
         if ($delete_row) {
-            $log_msg = "${_SESSION['username']} remove ${search_field} ${row['artist_id']} from ${search_table} table";
+            $log_msg = "${_SESSION['username']} remove ${search_field} ${row[$search_field]} from ${search_table} table";
             do_audit_log('INFO', $log_msg);
         }
       }
@@ -848,6 +856,19 @@ function update_artists($mp3_id, $artists = array())
         'search_id' => $mp3_id,
         'primary_search_col_nm' => 'mp3_id',
         'user_selected_fields' => $artists
+    ];
+
+    return update_junction_table($input);
+}
+
+function update_categories($mp3_id, $categories = array())
+{
+    $input = [
+        'search_field' => 'category_id',
+        'search_tbl' => 'mp3_category',
+        'search_id' => $mp3_id,
+        'primary_search_col_nm' => 'mp3_id',
+        'user_selected_fields' => $categories
     ];
 
     return update_junction_table($input);

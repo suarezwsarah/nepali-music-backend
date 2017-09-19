@@ -23,18 +23,27 @@ if (is_post_request()) {
 
     // update categories
     $categories = trimed_array($_POST['cat_ids']);
+    $update_categories = update_categories($mp3_id, $categories);
+    if ($update_categories) {
+        do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
+    } else {
+        $errors[] = 'Failed to update category';
+    }
 
 
 
 } else {
     $id = $_GET['id'];
     $mp3 = find_mp3_by_id($id);
+
     $artists = find_mp3_artist_by_mp3_id($id);
 
     // Used to populate artist select dropdown
     $all_artists = find_all_from('artist');
 
     $all_categories = find_all_from('category');
+
+    $selected_categories = find_mp3_category_by_mp3_id($id);
 
 }
 
@@ -72,6 +81,10 @@ if (is_post_request()) {
                                 <div class="col-md-6">
                                     <select name="cat_ids[]" id="cat_id" class="select2" multiple required>
                                         <option value="">--Select Category--</option>
+                                        <?php while ($selected_category = mysqli_fetch_assoc($selected_categories)) { ?>
+                                            <option selected value="<?php echo $selected_category['id']; ?>"> <?php echo $selected_category['name']; ?> </option>
+                                        <?php } ?>
+                                        <?php mysqli_free_result($selected_categories); ?>
 
                                         <?php while ($category = mysqli_fetch_assoc($all_categories)) { ?>
                                             <option value="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></option>
