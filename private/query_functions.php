@@ -719,11 +719,16 @@ function update_table($table_name, $fields)
         if ($field_name != 'id') {
             $clean_field_name = db_escape($db, $field_name);
             $clean_field_value = db_escape($db, $field_value);
-            $sql .= $clean_field_name . " = " . "'${clean_field_value}' ";
+            $sql .= $clean_field_name . " = " . "'${clean_field_value}' ,";
         }
     }
+
+    $last_comma_position = strrpos($sql, ',');
+    $sql = substr($sql, 0, $last_comma_position);
+
     $sql .= "WHERE id = " . db_escape($db, $fields['id']) . ' ';
     $sql .= "LIMIT 1";
+    do_audit_log('SQL', $sql);
     $result = mysqli_query($db, $sql);
     if ($result) {
         return true;
@@ -879,7 +884,7 @@ function update_categories($mp3_id, $categories = array())
 function do_audit_log($log_level, $log_text)
 {
     $fields = ['log_level' => $log_level, 'log_text' => $log_text];
-    insert_table('log_audit', $fields);
+    return insert_table('log_audit', $fields);
 }
 
 ?>

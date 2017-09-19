@@ -6,33 +6,15 @@
 $errors = [];
 $category_id = '';
 $category_name = '';
-$succeed_msg = '';
+$succeed_msgs = [];
 
+if (is_get_request()) {
 
-if (is_post_request()) {
-    $mp3 = $_POST;
-    // Remove all the spaces of element inside array
-    $artists = trimed_array($_POST['mp3_artist']);
-    $mp3_id = db_escape($db, $_POST['id']);
-    $update_artist =  update_artists($mp3_id, $artists);
-    if (!$update_artist) {
-        $errors[] = 'Failed to update artists';
-    } else {
-        do_audit_log('INFO', "${_SESSION['username']} updated artists");
+    if (empty($_GET) || is_blank($_GET['id'])) {
+        $audit_log = do_audit_log('ERROR', 'User entered edit_mp3.php page but no paramater of id was set');
+        redirect_to(url_for('error.php'));
     }
 
-    // update categories
-    $categories = trimed_array($_POST['cat_ids']);
-    $update_categories = update_categories($mp3_id, $categories);
-    if ($update_categories) {
-        do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
-    } else {
-        $errors[] = 'Failed to update category';
-    }
-
-
-
-} else {
     $id = $_GET['id'];
     $mp3 = find_mp3_by_id($id);
 
@@ -44,6 +26,58 @@ if (is_post_request()) {
     $all_categories = find_all_from('category');
 
     $selected_categories = find_mp3_category_by_mp3_id($id);
+}
+
+if (is_post_request()) {
+
+    $errors = validate_fields(['mp3_title' => 'Mp3 title','mp3_duration' => 'mp3 duration']);
+
+    $mp3_url = $_POST['mp3_url'];
+
+    if (!preg_match('/.mp3/', $mp3_url)) {
+        $errors[] = 'Invalid mp3 url';
+    }
+
+    $mp3_id = db_escape($db, $_POST['id']);
+
+    if (empty($errors)) {
+
+        $fields = ['id' => $_POST['id'], 'url' => $_POST['mp3_url'], 'duration' => $_POST['mp3_duration']];
+        $updated = update_table('mp3', $fields);
+        if ($updated) {
+            $succeed_msgs[] = 'Sucessfully updated';
+        }
+
+        $artists = trimed_array($_POST['mp3_artist']);
+        $update_artist = update_artists($mp3_id, $artists);
+        if (!$update_artist) {
+            $errors[] = 'Failed to update artists';
+        } else {
+            do_audit_log('INFO', "${_SESSION['username']} updated artists");
+        }
+
+        // update categories
+        $categories = trimed_array($_POST['cat_ids']);
+        $update_categories = update_categories($mp3_id, $categories);
+        if ($update_categories) {
+            do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
+        } else {
+            $errors[] = 'Failed to update category';
+        }
+    }
+
+    if ($mp3_id) {
+        $mp3 = find_mp3_by_id($mp3_id);
+
+        $artists = find_mp3_artist_by_mp3_id($mp3_id);
+
+        // Used to populate artist select dropdown
+        $all_artists = find_all_from('artist');
+
+        $all_categories = find_all_from('category');
+
+        $selected_categories = find_mp3_category_by_mp3_id($mp3_id);
+    }
 
 }
 
@@ -63,14 +97,14 @@ if (is_post_request()) {
             <div class="clearfix"></div>
             <div class="row mrg-top">
                 <div class="col-md-12">
-
                     <div class="col-md-12 col-sm-12">
-
+                        <?php echo display_my_errors_sec_pages($errors); ?>
+                        <?php echo display_my_success_sec_pages($succeed_msgs); ?>
                     </div>
                 </div>
             </div>
             <div class="card-body mrg_bottom">
-                <form action="" name="edit_form" method="post" class="form form-horizontal"
+                <form action="edit_mp3.php" name="edit_form" method="post" class="form form-horizontal"
                       enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?php echo $mp3['id']; ?>"/>
 
@@ -95,21 +129,21 @@ if (is_post_request()) {
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Title :-</label>
+                                <label class="col-md-3 control-label">Title : </label>
                                 <div class="col-md-6">
-                                    <input type="text" name="mp3_title" id="mp3_title" value="Yo Gaunko Thito Ma"
+                                    <input type="text" name="mp3_title" id="mp3_title" value="<?php echo $mp3['title']; ?>"
                                            class="form-control" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label">duration :-</label>
+                                <label class="col-md-3 control-label">duration : </label>
                                 <div class="col-md-6">
-                                    <input type="text" name="mp3_duration" id="mp3_duration" value="02:53"
+                                    <input type="text" name="mp3_duration" id="mp3_duration" value="<?php echo $mp3['duration']; ?>"
                                            class="form-control" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Artist :-</label>
+                                <label class="col-md-3 control-label">Artist : </label>
                                 <div class="col-md-6">
                                     <select name="mp3_artist[]" id="mp3_artist" class="select2 form-control" required
                                             multiple="multiple">
@@ -129,43 +163,12 @@ if (is_post_request()) {
                                 </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">MP3 Type :-</label>
-                                <div class="col-md-6">
-                                    <select name="mp3_type" id="mp3_type" style="width:280px; height:25px;"
-                                            class="select2" required>
-                                        <option value="">--Select Category--</option>
-                                        <option value="server_url" selected>From Server</option>
-                                        <option value="local">From Local</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div id="mp3_url_display" class="form-group" style="display:block;">
-                                <label class="col-md-3 control-label">Video URL :-</label>
+                                <label class="col-md-3 control-label">URL : </label>
                                 <div class="col-md-6">
                                     <input type="text" name="mp3_url" id="mp3_url"
-                                           value="https://archive.org/download/hits-nepali-songs-of-udit-narayan-www.nepalitheater.com/Yo%20Gaunko%20Thito%20Ma%5bwww.nepalitheater.com%5d.mp3"
+                                           value="<?php echo $mp3['url']; ?>"
                                            class="form-control">
-                                </div>
-                            </div>
-                            <div id="mp3_local_display" class="form-group" style="display:none;">
-                                <label class="col-md-3 control-label">Video Upload :-</label>
-                                <div class="col-md-6">
-
-                                    <input type="hidden" name="mp3_file_name" id="mp3_file_name" value=""
-                                           class="form-control">
-                                    <input type="file" name="mp3_local" id="mp3_local" value="" class="form-control">
-                                    <div><label class="control-label">Current URL :-</label>https://archive.org/download/hits-nepali-songs-of-udit-narayan-www.nepalitheater.com/Yo%20Gaunko%20Thito%20Ma%5bwww.nepalitheater.com%5d.mp3
-                                    </div>
-                                    <br>
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-success myprogress" role="progressbar"
-                                             style="width:0%">0%
-                                        </div>
-                                    </div>
-
-                                    <div class="msg"></div>
-                                    <input type="button" id="btn" class="btn-success" value="Upload"/>
                                 </div>
                             </div>
                             <br>
@@ -185,7 +188,7 @@ if (is_post_request()) {
                                 <label class="col-md-3 control-label">Video Description :-</label>
                                 <div class="col-md-6">
                                     <textarea name="mp3_description" id="mp3_description"
-                                              class="form-control"></textarea>
+                                              class="form-control"><?php echo $mp3['description'];?></textarea>
 
                                     <script>CKEDITOR.replace('mp3_description');</script>
                                 </div>
@@ -193,7 +196,7 @@ if (is_post_request()) {
                             <br>
                             <div class="form-group">
                                 <div class="col-md-9 col-md-offset-3">
-                                    <button type="submit" name="submit" class="btn btn-primary">Save</button>
+                                    <button type="submit" name="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </div>
                         </div>
@@ -206,4 +209,3 @@ if (is_post_request()) {
 
 
 <?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
-

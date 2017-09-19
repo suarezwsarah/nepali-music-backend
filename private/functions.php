@@ -82,6 +82,35 @@ function display_my_errors($errors = array()) {
   return $output;
 }
 
+// Display error inside login secured pages
+function display_my_errors_sec_pages($errors = array()) {
+  if (!empty($errors)) {
+      $output = '<div class="alert alert-danger alert-dismissible" role="alert">';
+      $output .=  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+      $output .=  '<span aria-hidden="true">×</span>';
+      $output .=  '</button>';
+      foreach ($errors as $error) {
+          $output .= "<p>${error}</p>";
+      }
+      $output .= '</div>';
+      return $output;
+  }
+}
+
+function display_my_success_sec_pages($msgs = array()) {
+    if (!empty($msgs)) {
+        $output = '<div class="alert alert-success alert-dismissible" role="alert">';
+        $output .=  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+        $output .=  '<span aria-hidden="true">×</span>';
+        $output .=  '</button>';
+        foreach ($msgs as $msg) {
+            $output .= "<p>${msg}</p>";
+        }
+        $output .= '</div>';
+        return $output;
+    }
+}
+
 
 function get_and_clear_session_message() {
   if(isset($_SESSION['message']) && $_SESSION['message'] != '') {

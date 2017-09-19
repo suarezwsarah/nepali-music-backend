@@ -131,4 +131,18 @@
     return $admin_count === 0;
   }
 
+// Validate fields(arrays)
+// Validate is the field is not set or blank
+// it will return array of errors if invalid
+// otherwise it will return empty array
+function validate_fields($fields = array()) {
+    $errors = [];
+    foreach ($fields as $key => $value) {
+      if (is_blank($_POST[$key])) {
+        $errors[] = "${value} is required! can't be blank buddy";
+      }
+    }
+    return $errors;
+}
+
 ?>
