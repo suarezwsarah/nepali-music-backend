@@ -897,4 +897,14 @@ function tbl_count_query($tbl) {
     return $result_row;
 }
 
+function find_config($key) {
+    global $db;
+    $sql = "SELECT * FROM config WHERE config_key = '" . trim($key) . "'";
+    $result = mysqli_query($db, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $result_row = $row['config_value'];
+    mysqli_free_result($result);
+    return $result_row;
+}
+
 ?>

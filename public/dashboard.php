@@ -6,6 +6,10 @@
 
 $num_categories = tbl_count_query('category');
 
+$num_artists = tbl_count_query('artist');
+
+$num_mp3s = tbl_count_query('mp3');
+
 
 ?>
 
@@ -39,7 +43,7 @@ $num_categories = tbl_count_query('category');
             <div class="card-body"><i class="icon fa fa-buysellads fa-4x"></i>
                 <div class="content">
                     <div class="title">Artist</div>
-                    <div class="value"><span class="sign"></span>300</div>
+                    <div class="value"><span class="sign"></span><?php echo $num_artists; ?></div>
                 </div>
             </div>
         </a>
@@ -49,7 +53,7 @@ $num_categories = tbl_count_query('category');
             <div class="card-body"><i class="icon fa fa-music fa-4x"></i>
                 <div class="content">
                     <div class="title">Mp3 Songs</div>
-                    <div class="value"><span class="sign"></span>200</div>
+                    <div class="value"><span class="sign"></span><?php echo $num_mp3s; ?></div>
                 </div>
             </div>
         </a>

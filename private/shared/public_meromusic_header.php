@@ -72,7 +72,7 @@
                         <li>
                             <button type="button" class="sidebar-toggle"> <i class="fa fa-bars"></i> </button>
                         </li>
-                        <li class="logo"> <a class="navbar-brand" href="#">App name</a> </li>
+                        <li class="logo"> <a class="navbar-brand" href="#"><?php echo find_config(APP_NAME); ?></a> </li>
                         <li>
                             <button type="button" class="navbar-toggle">
                                 <img class="profile-img" src="images/<?php get_img('profile.png'); ?>">
@@ -80,7 +80,7 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li class="navbar-title">App name</li>
+                        <li class="navbar-title"><?php echo find_config(APP_NAME); ?></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

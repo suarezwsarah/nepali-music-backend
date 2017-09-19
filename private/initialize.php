@@ -11,6 +11,9 @@
   define("PUBLIC_PATH", PROJECT_PATH . '/public');
   define("SHARED_PATH", PRIVATE_PATH . '/shared');
 
+
+  define('APP_NAME', 'APP_NAME');
+
   // Assign the root URL to a PHP constant
   // * Do not need to include the domain
   // * Use same document root as webserver
