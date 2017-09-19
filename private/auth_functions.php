@@ -19,6 +19,10 @@
     return true;
   }
 
+  function get_current_username() {
+    return $_SESSION['username'];
+  }
+
 
   // is_logged_in() contains all the logic for determining if a
   // request should be considered a "logged in" request or not.
@@ -34,9 +38,15 @@
 
   // Call require_login() at the top of any page which needs to
   // require a valid login before granting acccess to the page.
+  // If a user came from page other than normal login in secure page
+  // store the required url in the session so they can be redirect after
+  // loggin into the page
   function require_login() {
     if(!is_logged_in()) {
-      redirect_to(url_for('/staff/login.php'));
+      $request_page_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING'];
+      do_audit_log('URL', $request_page_uri);
+      //$_SESSION['page_to_redirect'] = $request_page_uri;
+      redirect_to(url_for('/mp3_index.php'));
     } else {
       // Do nothing, let the rest of the page proceed
     }

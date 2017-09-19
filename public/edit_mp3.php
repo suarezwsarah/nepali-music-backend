@@ -42,7 +42,7 @@ if (is_post_request()) {
 
     if (empty($errors)) {
 
-        $fields = ['id' => $_POST['id'], 'url' => $_POST['mp3_url'], 'duration' => $_POST['mp3_duration']];
+        $fields = ['id' => $_POST['id'], 'url' => $_POST['mp3_url'], 'duration' => $_POST['mp3_duration'], 'description' => h($_POST['mp3_description'])];
         $updated = update_table('mp3', $fields);
         if ($updated) {
             $succeed_msgs[] = 'Sucessfully updated';

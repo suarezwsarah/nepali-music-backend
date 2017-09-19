@@ -35,7 +35,17 @@ if (is_post_request()) {
             if (password_verify($password, $admin['hashed_password'])) {
                 // password matches
                 log_in_admin($admin);
-                redirect_to(url_for('dashboard.php'));
+                // login successful at this point..now check if user
+                // entered page from something other than login page
+                // if that is the page, the request uri is saved on
+                // page_to_redirect. so redirect then in this case
+                if (!is_blank($_SESSION['page_to_redirect'])) {
+                    $page_to_redirect = $_SESSION['page_to_redirect'];
+                    unset($_SESSION['page_to_redirect']);
+                    redirect_to($_SESSION['page_to_redirect']);
+                } else {
+                    redirect_to(url_for('dashboard.php'));
+                }
             } else {
                 // username found, but password does not match
                 $errors[] = $login_failure_msg;

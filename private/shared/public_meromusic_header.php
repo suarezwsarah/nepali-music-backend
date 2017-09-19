@@ -90,11 +90,11 @@
                             </a>
                             <div class="dropdown-menu">
                                 <div class="profile-info">
-                                    <h4 class="username">Admin</h4>
+                                    <h4 class="username"><?php echo get_current_username(); ?></h4>
                                 </div>
                                 <ul class="action">
                                     <li><a href="profile.php">Profile</a></li>
-                                    <li><a href="logout.php">Logout</a></li>
+                                    <li><a href="<?php echo url_for('logout.php');?>">Logout</a></li>
                                 </ul>
                             </div>
                         </li>

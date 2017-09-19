@@ -2,6 +2,13 @@
 
 <?php require_login(); ?>
 
+<?php
+
+$num_categories = tbl_count_query('category');
+
+
+?>
+
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
 
 <div class="btn-floating" id="help-actions">
@@ -10,9 +17,9 @@
                 class="icon fa fa-plus"></i> <span class="help-text">Shortcut</span></button>
     <div class="toggle-content">
         <ul class="actions">
-            <li><a href="http://www.viaviweb.com" target="_blank">Website</a></li>
-            <li><a href="Documentation/index.html" target="_blank">Documentation</a></li>
-            <li><a href="https://codecanyon.net/user/viaviwebtech?ref=viaviwebtech" target="_blank">About</a></li>
+            <li><a href="#" target="_blank">Website</a></li>
+            <li><a href="#" target="_blank">Documentation</a></li>
+            <li><a href="#" target="_blank">About</a></li>
         </ul>
     </div>
 </div>
@@ -22,7 +29,7 @@
             <div class="card-body"><i class="icon fa fa-sitemap fa-4x"></i>
                 <div class="content">
                     <div class="title">Categories</div>
-                    <div class="value"><span class="sign"></span> 500 </div>
+                    <div class="value"><span class="sign"></span> <?php echo $num_categories; ?> </div>
                 </div>
             </div>
         </a>

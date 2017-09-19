@@ -887,4 +887,14 @@ function do_audit_log($log_level, $log_text)
     return insert_table('log_audit', $fields);
 }
 
+function tbl_count_query($tbl) {
+    global $db;
+    $sql = "SELECT count(*) AS result FROM $tbl";
+    $result = mysqli_query($db, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $result_row = $row['result'];
+    mysqli_free_result($result);
+    return $result_row;
+}
+
 ?>
