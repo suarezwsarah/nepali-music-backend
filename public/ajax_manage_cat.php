@@ -16,9 +16,8 @@ if ($_GET && !is_blank($_GET['search_txt'])) {
         <?php  $id = $category['id'];  ?>
         <td tabindex="<?php echo $counter?>" onblur="updateCategory('<?php echo $id ?>',this);" class="md-col-8" data-id="<?php echo $category['id']?>" contenteditable><?php echo $category['name']?></td>
         <?php $url = url_for('edit_cat.php') . '?id=' . $category['id']; ?>
-        <td class="md-col-4"><a href="<?php echo $url; ?>" class="btn btn-primary">Edit</a>
-            <a href="?cat_id=" class="btn btn-default"
-               onclick="return confirm('Are you sure you want to delete this category and related songs?');">Delete</a>
+        <td class="md-col-4">
+            <a href="#" class="btn btn-default" onclick="deleteCategory('<?php echo $id?>')"><i class="fa fa-trash"></i></a>
         </td>
     </tr>
     <?php $counter++; ?>

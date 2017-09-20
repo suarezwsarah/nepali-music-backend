@@ -1,3 +1,19 @@
+"use strict";
+
+var manageCatTbl =  $('#manageCatTblBody');
+var manageCatAjaxUrl = "ajax_manage_cat.php";
+
+var loadAllCategories = function () {
+    $.get(manageCatAjaxUrl, function (data, status) {
+        if (data) {
+            manageCatTbl.html("");
+            $('#manageCatTblBody').html(data);
+        } else {
+            manageCatTbl.html("");
+        }
+    });
+};
+
 var updateCategory = function (id, elm) {
     $(document).ready(function () {
         var element = $(elm);
@@ -15,22 +31,32 @@ var updateCategory = function (id, elm) {
     });
 };
 
+var onDocReady = function (params) {
+  $(document).ready(function () {
+      params.callback();
+  });
+};
+
+var deleteCategory = function (id) {
+    onDocReady({
+        callback : function () {
+            id = id.trim();
+            $.ajax({
+                url : 'ajax_delete_cat.php',
+                type: 'POST',
+                data: 'id=' + id,
+                success : function (data, status) {
+                    loadAllCategories();
+                }
+            });
+        }
+    });
+};
+
 (function () {
     $(document).ready(function () {
 
         var manageCatAjaxUrl = "ajax_manage_cat.php";
-        var manageCatTbl =  $('#manageCatTblBody');
-
-        var loadAllCategories = function () {
-            $.get(manageCatAjaxUrl, function (data, status) {
-                if (data) {
-                    manageCatTbl.html("");
-                    $('#manageCatTblBody').html(data);
-                } else {
-                    manageCatTbl.html("");
-                }
-            });
-        };
 
         loadAllCategories();
 
@@ -52,11 +78,26 @@ var updateCategory = function (id, elm) {
                 loadAllCategories();
             }
         });
+        //data-toggle="modal" data-target="#addCategoryModal"
+        $('#addCategoryLink').click(function (e) {
+            e.preventDefault();
+            $('#addCategoryModal').modal('toggle');
+        });
 
-/*
-        $('#manageCatTblBody tr td').blur(function () {
-            alert('helol');
-        });*/
+        $('#btnAddCatModalSave').click(function () {
+            var name = $('#category_name_1').val();
+            var url = 'ajax_add_cat.php';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: 'category_name_1='+name,
+                success: function (data, status) {
+                    //alert(data);
+                    $('#addCategoryModal').modal('hide');
+                    loadAllCategories();
+                }
+            });
+        });
 
     });
 }());
