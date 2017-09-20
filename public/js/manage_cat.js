@@ -17,15 +17,18 @@ var loadAllCategories = function () {
 var updateCategory = function (id, elm) {
     $(document).ready(function () {
         var element = $(elm);
-        //element.css("background","#FFF url(http://localhost/meromusic/public/images/giphy.gif) no-repeat right");
+        var divContainer =  $('#divManageCatTbl');
+        divContainer.addClass('loading');
+        $('#tblCategory').addClass('no-display');
         $.ajax({
             url: "ajax_edit_cat.php",
             type: "POST",
             data: 'cat_id=' + id + '&category_name=' + elm.innerHTML,
             success: function (data) {
-                //alert(data);
-                element.removeAttr('background');
-                element.css("background", "green");
+                setTimeout(function () {
+                    divContainer.removeClass('loading');
+                    $('#tblCategory').removeClass('no-display');
+                }, 2000);
             }
         });
     });

@@ -17,7 +17,7 @@
 
 </head>
 <body>
-<div class="app app-default">
+<div class="app app-default" id="mainAppContainer">
     <aside class="app-sidebar" id="sidebar">
         <div class="sidebar-header"> <a class="sidebar-brand" href="home.php"><img src="<?php echo get_img('app_logo.png') ?>" alt="app logo" /></a>
             <button type="button" class="sidebar-toggle"> <i class="fa fa-times"></i> </button>
