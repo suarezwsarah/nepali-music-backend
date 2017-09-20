@@ -49,8 +49,8 @@
                 <table class="table table-striped table-bordered table-hover">
                     <thead>
                     <tr>
-                        <th>Category</th>
-                        <th class="cat_action_list">Action</th>
+                        <th class="col-md-8">Category</th>
+                        <th class="col-md-4 cat_action_list">Action</th>
                     </tr>
                     </thead>
                     <tbody id="manageCatTblBody">

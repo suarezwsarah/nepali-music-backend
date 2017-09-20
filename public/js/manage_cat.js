@@ -1,3 +1,20 @@
+var updateCategory = function (id, elm) {
+    $(document).ready(function () {
+        var element = $(elm);
+        //element.css("background","#FFF url(http://localhost/meromusic/public/images/giphy.gif) no-repeat right");
+        $.ajax({
+            url: "ajax_edit_cat.php",
+            type: "POST",
+            data: 'cat_id=' + id + '&category_name=' + elm.innerHTML,
+            success: function (data) {
+                //alert(data);
+                element.removeAttr('background');
+                element.css("background", "green");
+            }
+        });
+    });
+};
+
 (function () {
     $(document).ready(function () {
 
@@ -35,6 +52,11 @@
                 loadAllCategories();
             }
         });
+
+/*
+        $('#manageCatTblBody tr td').blur(function () {
+            alert('helol');
+        });*/
 
     });
 }());

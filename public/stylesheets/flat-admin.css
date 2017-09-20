@@ -7116,5 +7116,11 @@ table.table > tbody > tr td, table.table > tbody > tr th, table.table > thead > 
   width: 100%;
 }
 }
-	
+
+
+/* */
+.ajax-success-background {
+	background-color : #29c75f;
+}
+
 /*===========Custom Css End=============*/
