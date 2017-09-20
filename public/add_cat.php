@@ -5,54 +5,42 @@
 
 $errors = [];
 $category_name = '';
-$succeed_msg = '';
+$succeed_msgs = [];
+
+function get_input_categories()
+{
+    $categories = [];
+    foreach ($_POST as $key => $value) {
+        if (preg_match('/category_name/', $key)) {
+            if (is_blank($value)) {
+                $errors[] = 'Category name cant be blank';
+            } else {
+                $categories[$key] = $value;
+            }
+        }
+    }
+    return $categories;
+}
 
 if (is_post_request()) {
 
-    $category_name = $_POST['category_name'];
-
-    if (is_blank($category_name)) {
-        $errors[] = 'Category name cant be blank';
-    }
+    $categories = get_input_categories();
 
     if (empty($errors)) {
-        $field = [
-            "name" => $category_name
-        ];
-
-        $insert_category = insert_table('category', $field);
-
-        if ($insert_category) {
-            $succeed_msg = 'Successfully Created';
+        foreach ($categories as $cat_name => $cat_val) {
+            $fields = ['name' => $cat_val];
+            $insert_category = insert_table('category', $fields);
+            if ($insert_category) {
+                $succeed_msgs[] = "Sucessfully inserted ${cat_val}";
+            }
         }
-
     }
-
 }
 
 ?>
 
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
-
-<script>
-    (function () {
-        $(document).ready(function () {
-            $("#addMoreCat").click(function (event) {
-                event.preventDefault();
-                var newCatBox = $(document.createElement('div'));
-                $(newCatBox).attr('class', 'form-group');
-                newCatBox.after().html(
-                    '<label class="col-md-3 control-label">Category Name :-</label>' +
-                    '<div class="col-md-6">' +
-                    '    <input type="text" name="category_name" id="category_name" value="" class="form-control" required>' +
-                    '</div>'
-                );
-
-                newCatBox.prependTo("#sectionBody");
-            });
-        });
-    }());
-</script>
+<script src="<?php echo get_js('add_cat'); ?>"></script>
 
 <div class="row">
     <div class="col-md-12">
@@ -65,53 +53,44 @@ if (is_post_request()) {
             <div class="clearfix"></div>
             <div class="row mrg-top">
                 <div class="col-md-12">
-
-                    <?php if (!empty($errors)) {  ?>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="alert alert-danger alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <?php
-                                $error_output = '';
-                                foreach ($errors as $error) {
-                                    $error_output .= "<p>${error}</p>";
-                                }
-                                echo $error_output;
-                                ?>
-                            </div>
-                        </div>
-                    <?php } // end $errors check?>
-
-                    <?php if (!empty($succeed_msg)) {  ?>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="alert alert-success alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <p><?php echo $succeed_msg ?></p>
-                            </div>
-                        </div>
-                    <?php } // end $succeed_msg empty check?>
-
+                    <div class="col-md-12 col-sm-12">
+                        <?php echo display_my_errors_sec_pages($errors); ?>
+                        <?php echo display_my_success_sec_pages($succeed_msgs); ?>
+                    </div>
                 </div>
             </div>
             <div class="card-body mrg_bottom">
-                <form action="add_cat.php" name="addeditcategory" method="post" class="form form-horizontal" enctype="multipart/form-data">
+                <form action="add_cat.php" name="addeditcategory" method="post" class="form form-horizontal"
+                      enctype="multipart/form-data">
                     <div class="section">
                         <div class="section-body" id="sectionBody">
-                            <div class="form-group">
-                                <label class="col-md-3 control-label">Category Name :-</label>
-                                <div class="col-md-6">
-                                    <input type="text" name="category_name" id="category_name" value="" class="form-control" required>
+                            <?php if (is_get_request()) { ?>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Category Name :-</label>
+                                    <div class="col-md-6">
+                                        <input type="text" name="category_name_1" id="category_name_1" value=""
+                                               class="form-control" required>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php } ?>
 
-                            <div class="form-group" id="btnSaveCategory">
+                            <?php if (!empty($categories)) { ?>
+                                <?php foreach ($categories as $cat_name => $cat_val) { ?>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Category Name :-</label>
+                                        <div class="col-md-6">
+                                            <input name="<?php echo $cat_name ?>" id="category_name"
+                                                   value="<?php echo $cat_val; ?>" class="form-control" required>
+                                        </div>
+                                    </div>
+                                <?php } // end foreach ?>
+                            <?php } // end if ?>
+
+                            <div class="form-group">
                                 <div class="col-md-9 col-md-offset-3">
-                                    <button type="submit" name="submit" class="btn btn-primary">Save</button>
+                                    <button type="submit" id="btnSaveCat" name="submit" disabled class="btn btn-primary">Save</button>
                                     <button id="addMoreCat" name="add" class="btn btn-primary">Add More</button>
-                               </div>
+                                </div>
                             </div>
                         </div>
                     </div>

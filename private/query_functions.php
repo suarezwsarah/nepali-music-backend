@@ -907,4 +907,20 @@ function find_config($key) {
     return $result_row;
 }
 
+function find_results_query($tbl, $col_to_filter = null, $col_val = null, $wild_card = false) {
+    global $db;
+    $sql = "SELECT * FROM ${tbl}";
+    if ($col_to_filter != null && $col_val != null) {
+        if ($wild_card) {
+            $sql .=  " WHERE ${col_to_filter} LIKE '" . $col_val . "%'";
+        } else {
+            $sql .= " WHERE ${col_to_filter}=${col_val}";
+        }
+    }
+    do_audit_log('INFO', $sql);
+    $result = mysqli_query($db, $sql);
+    confirm_result_set($result);
+    return $result;
+}
+
 ?>
