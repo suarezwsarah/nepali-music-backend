@@ -13,6 +13,9 @@ $(function () {
 
     var categoryEditTr = $('.sd-category-editable');
 
+    var templateModalError = $('#templateModalError');
+    var modalErrors = $('#modalErrors');
+
     // input inside modal
     var fieldModalCategoryName = $('#category_name_1');
 
@@ -136,6 +139,8 @@ $(function () {
         CategoryCrud.create(name);
     });
 
+    var errorTemplate =  templateModalError.html();
+
     fieldModalCategoryName.keyup(function () {
         var currentVal = $(this).val();
         $.get('ajax_manage_cat.php?action=count&name='+currentVal, function (response, data) {
@@ -143,9 +148,11 @@ $(function () {
             if (result.row === "1") {
                 console.log(result.row);
                 btnAddCatModalSave.prop('disabled', 'disabled');
-                alert('Trying entering differnt category..this already exists in DB');
+                var htmlError = errorTemplate.replace(/{{errorMessage}}/g, 'Category you entered already existed in the database');
+                modalErrors.html(htmlError);
             } else {
                 btnAddCatModalSave.removeAttr('disabled');
+                $('#modalErrors').html('');
             }
         });
     });
