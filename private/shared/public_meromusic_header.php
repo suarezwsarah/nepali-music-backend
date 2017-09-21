@@ -11,8 +11,8 @@
 
     <script src="<?php echo url_for('/ckeditor/ckeditor.js')?>"></script>
     <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
-    <script src="<?php echo get_js('meromusic'); ?>"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--    <script src="<?php /*echo get_js('meromusic'); */?>"></script>
+-->    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
 </head>
@@ -25,17 +25,17 @@
         <div class="sidebar-menu">
             <ul class="sidebar-nav" id="navBar">
                 <li class="active">
-                    <a href="#">
+                    <a href="#" data-url="<?php echo url_for('dashboard.php')?>">
                         <div class="icon"> <i class="fa fa-dashboard" aria-hidden="true"></i> </div>
                         <div class="title">Dashboard</div>
                     </a>
                 </li>
-                <li><a href="<?php echo url_for('manage_cat.php'); ?>">
+                <li><a href="" id="linkCategories" data-url="<?php echo url_for('manage_cat.php'); ?>">
                         <div class="icon"> <i class="fa fa-sitemap" aria-hidden="true"></i> </div>
                         <div class="title">Categories</div>
                     </a>
                 </li>
-                <li> <a href="#">
+                <li> <a href="#" id="linkArtists">
                         <div class="icon"> <i class="fa fa-buysellads" aria-hidden="true"></i> </div>
                         <div class="title">Artist</div>
                     </a>
@@ -102,14 +102,3 @@
                 </div>
             </div>
         </nav>
-
-<!--<body>
-
-<header>
-    <h1>
-        <a href="<?php /*echo url_for('/index.php'); */?>">
-            <img src="<?php /*echo url_for('/images/gbi_logo.png'); */?>" width="298" height="71" alt="" />
-        </a>
-    </h1>
-</header>
--->
