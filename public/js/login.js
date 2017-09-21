@@ -1,23 +1,44 @@
-function checkValidation()
-{
-	if(document.getElementById('username').value=="")
-	{
-		alert("Please Enter Your user name .!");
-		 
-		document.getElementById('username').focus();
-		document.getElementById('username').select();
-		return false;
-	}	 
-	
-	if(document.getElementById('password').value=="")
-	{
-		alert("Please Enter Your password .!");
-		 
-		document.getElementById('password').focus();
-		document.getElementById('password').select();
-		return false;
-	}
-	  
-	
-	return true;
-} 
+"use strict";
+
+$(function () {
+
+	var username = $('#username');
+	var password = $('#password');
+	var btnLogin = $('#btnLogin');
+
+	var validUsername = false;
+	var validPassword = false;
+
+	// focus on username input when the page is loaded
+	username.focus();
+
+	// disable the login button initially
+	btnLogin.prop('disabled', true);
+
+	username.keyup(function () {
+		var length = $(this).val().trim().length;
+		if (length > 0) {
+			validUsername = true;
+			if (validUsername && validPassword) {
+				btnLogin.prop('disabled', false);
+			}
+		}else {
+			validUsername = false;
+            btnLogin.prop('disabled', true);
+        }
+    });
+
+	password.keyup(function () {
+		var length = $(this).val().trim().length;
+		if (length > 0) {
+			validPassword = true;
+            if (validUsername && validPassword) {
+                btnLogin.prop('disabled', false);
+            }
+		} else {
+			validPassword = false;
+            btnLogin.prop('disabled', true);
+        }
+     })
+
+});

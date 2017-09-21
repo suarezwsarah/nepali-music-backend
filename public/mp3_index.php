@@ -44,7 +44,7 @@ if (is_post_request()) {
                     unset($_SESSION['page_to_redirect']);
                     redirect_to($_SESSION['page_to_redirect']);
                 } else {
-                    redirect_to(url_for('dashboard.php'));
+                    redirect_to(url_for('app_template.php'));
                 }
             } else {
                 // username found, but password does not match
@@ -79,8 +79,8 @@ if (is_post_request()) {
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/blue-sky.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/red.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/yellow.css'); ?>">
-
-    <script src="<?php echo url_for('/js/login.js'); ?>" type="text/javascript"></script>
+    <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
+    <script src="<?php echo url_for('/js/login.js'); ?>"></script>
 
 </head>
 <body>
@@ -120,7 +120,7 @@ if (is_post_request()) {
                                        placeholder="Password" aria-describedby="basic-addon2">
                             </div>
                             <div class="text-center">
-                                <input type="submit" class="btn btn-success btn-submit" value="Login">
+                                <input type="submit" id="btnLogin" class="btn btn-success btn-submit" value="Login">
                             </div>
                         </form>
                     </div>

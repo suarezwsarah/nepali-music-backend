@@ -9,6 +9,10 @@
     return !isset($value) || trim($value) === '';
   }
 
+  function is_get_defined($key) {
+    return $_GET && $_GET[$key];
+  }
+
   // has_presence('abcd')
   // * validate data presence
   // * reverse of is_blank()

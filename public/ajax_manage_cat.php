@@ -7,7 +7,7 @@ $results = [];
 $categories = [];
 
 
-if ($_GET && !is_blank($_GET['action']) && $_GET['action'] == 'count') {
+if ($_GET && array_key_exists('action', $_GET) && !is_blank($_GET['action']) && $_GET['action'] == 'count') {
     $row_count = col_count('category', 'name', trim($_GET['name']));
     $results['status'] = true;
     $results['row'] = $row_count;

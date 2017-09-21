@@ -83,18 +83,6 @@ $(function () {
             if(value) {
                 listHtml += templateHtml.replace(/{{name}}/g, value.name)
                     .replace(/{{id}}/g, value.id);
-/*                var cleaned = '';
-                Object.keys(value).forEach(function (currentKey, currentIndex) {
-                    var strRegex = '{{' + currentKey + '}}';
-                    var templateKeyRegex = new RegExp(strRegex, 'g');
-                    if (value[currentKey]) {
-                        console.log(currentKey);
-                        console.log(value[currentKey]);
-                        console.log(templateKeyRegex + ' replacing ' + value[currentKey]);
-                        cleaned = templateHtml.replace(templateKeyRegex, value[currentKey]);
-                        console.log(cleaned);
-                    }
-                });*/
             }
         });
         return listHtml;
@@ -111,6 +99,7 @@ $(function () {
             var urlToSearch = manageCatAjaxUrl + "?search_txt=" + searchKey;
             $.get(urlToSearch, function (response, status) {
                 if (response) {
+                    console.log(response);
                     var obj = JSON.parse(response);
                     var trHtml = buildTrHtml(obj.data);
                     manageCatTblBody.html("");
@@ -132,6 +121,8 @@ $(function () {
     // reset the modal when it is hidden
     addCategoryModal.on('hidden.bs.modal', function(){
         $(this).find('form')[0].reset();
+        btnAddCatModalSave.prop('disabled', false);
+        modalErrors.html('');
     });
 
     btnAddCatModalSave.click(function () {
