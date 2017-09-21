@@ -897,6 +897,17 @@ function tbl_count_query($tbl) {
     return $result_row;
 }
 
+function col_count($tbl, $col_name, $col_val) {
+    global $db;
+    $sql = "SELECT count(*) AS result FROM ${tbl} WHERE ${col_name} = '${col_val}'";
+    do_audit_log('INFO', $sql);
+    $result = mysqli_query($db, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $result_row = $row['result'];
+    mysqli_free_result($result);
+    return $result_row;
+}
+
 function find_config($key) {
     global $db;
     $sql = "SELECT * FROM config WHERE config_key = '" . trim($key) . "'";

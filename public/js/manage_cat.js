@@ -49,13 +49,14 @@ $(function () {
                     setTimeout(function () {
                         divManageCatTbl.removeClass('loading');
                         tblCategory.removeClass('no-display');
-                        alert('hello');
                     }, 6000);
                 }
             });
         },
 
         delete : function (id) {
+            divManageCatTbl.addClass('loading');
+            tblCategory.addClass('no-display');
             id = id.trim();
             $.ajax({
                 url : 'ajax_delete_cat.php',
@@ -137,7 +138,16 @@ $(function () {
 
     fieldModalCategoryName.keyup(function () {
         var currentVal = $(this).val();
-        $.get('');
+        $.get('ajax_manage_cat.php?action=count&name='+currentVal, function (response, data) {
+            var result = JSON.parse(response);
+            if (result.row === "1") {
+                console.log(result.row);
+                btnAddCatModalSave.prop('disabled', 'disabled');
+                alert('Trying entering differnt category..this already exists in DB');
+            } else {
+                btnAddCatModalSave.removeAttr('disabled');
+            }
+        });
     });
 
 
