@@ -47,7 +47,6 @@
     </div>
 </div>
 
-
 <!-- Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -68,7 +67,7 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Category Name</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="category_name_1" id="category_name_1" value=""
+                                            <input name="category_name_1" id="category_name_1" value=""
                                                    class="form-control" required>
                                         </div>
                                     </div>
@@ -85,3 +84,14 @@
         </div>
     </div>
 </div>
+
+
+<!-- Template sections -->
+<script type="text/template" id="myCustomTr">
+    <tr>
+        <td onblur="CategoryCrud.update('{{id}}', this)" tabindex="{{id}}" class="col-md-8 sd-category-editable" id="category_sd_{{id}}" contenteditable>{{name}}</td>
+        <td class="md-col-4">
+            <a href="#" onclick="CategoryCrud.delete('{{id}}')" class="btn btn-default"><i class="fa fa-trash"></i></a>
+        </td>
+    </tr>
+</script>

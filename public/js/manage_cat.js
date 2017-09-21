@@ -11,6 +11,8 @@ $(function () {
     var tblCategory =  $('#tblCategory'); // table that holds everything for manage category including thead
     var divManageCatTbl =  $('#divManageCatTbl'); // this is the actual container for table
 
+    var categoryEditTr = $('.sd-category-editable');
+
     // input inside modal
     var fieldModalCategoryName = $('#category_name_1');
 
@@ -30,8 +32,9 @@ $(function () {
 
         readAll : function () {
             manageCatTblBody.html("");
-            makeAjaxGetCall('ajax_manage_cat.php', function (data) {
-                manageCatTblBody.html(data);
+            makeAjaxGetCall('ajax_manage_cat.php', function (response) {
+                var obj = JSON.parse(response);
+                manageCatTblBody.html(buildTrHtml(obj.data));
             })
         },
 
@@ -42,11 +45,12 @@ $(function () {
                 url: "ajax_edit_cat.php",
                 type: "POST",
                 data: 'cat_id=' + id + '&category_name=' + elm.innerHTML,
-                success: function (data) {
+                success: function (data, status) {
                     setTimeout(function () {
                         divManageCatTbl.removeClass('loading');
                         tblCategory.removeClass('no-display');
-                    }, 1000);
+                        alert('hello');
+                    }, 6000);
                 }
             });
         },
@@ -64,6 +68,34 @@ $(function () {
         }
     }; // end CategoryCrud
 
+
+
+    function buildTrHtml(items) {
+        console.log(items);
+        var myCustomeTr = $('#myCustomTr');
+        var templateHtml = myCustomeTr.html();
+        var listHtml = "";
+        $.each(items, function(key, value) {
+            if(value) {
+                listHtml += templateHtml.replace(/{{name}}/g, value.name)
+                    .replace(/{{id}}/g, value.id);
+/*                var cleaned = '';
+                Object.keys(value).forEach(function (currentKey, currentIndex) {
+                    var strRegex = '{{' + currentKey + '}}';
+                    var templateKeyRegex = new RegExp(strRegex, 'g');
+                    if (value[currentKey]) {
+                        console.log(currentKey);
+                        console.log(value[currentKey]);
+                        console.log(templateKeyRegex + ' replacing ' + value[currentKey]);
+                        cleaned = templateHtml.replace(templateKeyRegex, value[currentKey]);
+                        console.log(cleaned);
+                    }
+                });*/
+            }
+        });
+        return listHtml;
+    }
+
     // loading data on doc ready
     var manageCatAjaxUrl = "ajax_manage_cat.php";
 
@@ -73,10 +105,12 @@ $(function () {
         var searchKey = $(this).val().trim();
         if (searchKey.length > 0) {
             var urlToSearch = manageCatAjaxUrl + "?search_txt=" + searchKey;
-            $.get(urlToSearch, function (data, status) {
-                if (data) {
+            $.get(urlToSearch, function (response, status) {
+                if (response) {
+                    var obj = JSON.parse(response);
+                    var trHtml = buildTrHtml(obj.data);
                     manageCatTblBody.html("");
-                    manageCatTblBody.html(data);
+                    manageCatTblBody.html(trHtml);
                 } else {
                     manageCatTblBody.html("");
                 }
@@ -100,6 +134,12 @@ $(function () {
         var name =fieldModalCategoryName.val();
         CategoryCrud.create(name);
     });
+
+    fieldModalCategoryName.keyup(function () {
+        var currentVal = $(this).val();
+        $.get('');
+    });
+
 
 
 });
