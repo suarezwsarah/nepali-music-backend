@@ -10,7 +10,7 @@
   }
 
   function is_get_defined($key) {
-    return $_GET && $_GET[$key];
+    return $_GET && array_key_exists($key, $_GET) && !is_blank($_GET[$key]);
   }
 
   // has_presence('abcd')

@@ -10,6 +10,19 @@ $(function () {
 
     var searArtistInputBox = $('#searchArtistInputBox');
 
+    var $addEditArtistModal = $('#addEditArtistModal');
+    var $linkAddArtist = $('#linkAddArtist');
+
+    var $btnAddArtist = $('#btnAddCatModalSave');
+
+    var $formAddArtist = $('#addArtistForm');
+
+    var $modalError = $('#modalErrors');
+
+    var templateModalError = $('#templateModalError');
+
+    var $artistFileUploadInput = $('#artistFileUploadInput');
+
     window.ArtistCrud = {
         create : function () {
 
@@ -58,6 +71,11 @@ $(function () {
         return listHtml;
     }
 
+    function buildModalHtml(msg) {
+        var templateHtml = templateModalError.html();
+        return templateHtml.replace(/{{errorMessage}}/g, msg);
+    }
+
 
     ArtistCrud.readAll();
 
@@ -79,6 +97,62 @@ $(function () {
         } else {
             ArtistCrud.readAll();
         }
+    });
+
+    $linkAddArtist.click(function (e) {
+        e.preventDefault();
+        $addEditArtistModal.modal('toggle');
+    });
+
+    // When user selects the file
+    // make a call to server to make sure file with
+    // same name doesn't exist
+    $artistFileUploadInput.on('change', function () {
+        $modalError.html('');
+        var fileName = $(this).val().split('\\').pop().replace(' ', '');
+        $.ajax({
+            url : 'ajax_add_artist.php?check_img=' + fileName,
+            type : 'GET',
+            success : function (data, status) {
+                if (data) {
+                    var obj = JSON.parse(data);
+                    console.log(obj);
+                    if (obj.exists) {
+                        var modalHtml = buildModalHtml('The image already exists in server');
+                        $modalError.html(modalHtml);
+                        $btnAddArtist.prop('disabled', true);
+                    } else {
+                        $btnAddArtist.prop('disabled', false);
+                    }
+                }
+            }
+        });
+    });
+
+    $btnAddArtist.on('click', function (e) {
+        e.preventDefault();
+        var form = $formAddArtist[0];
+        var data = new FormData(form);
+        data.append('name', 'Sam');
+        data.append('city', 'Chicago');
+        $.ajax({
+            url : 'ajax_add_artist.php',
+            data : data,
+            type : 'POST',
+            cache: false,
+            processData: false,
+            contentType: false,
+            success : function (data, status) {
+                $modalError.html(data);
+            }
+        });
+    });
+
+    // reset the modal when it is hidden
+    $addEditArtistModal.on('hidden.bs.modal', function(){
+        $(this).find('form')[0].reset();
+        $btnAddArtist.prop('disabled', false);
+        $modalError.html('');
     });
 
 });

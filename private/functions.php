@@ -131,4 +131,67 @@ function trimed_array($arr = array()) {
   return array_map('trim', $arr);
 }
 
+function has_img_file($file_arr_key) {
+    return $_FILES !== null && !empty($_FILES) && array_key_exists($file_arr_key, $_FILES);
+}
+
+function valid_img_extension($image_file_type) {
+    $acceptable_format = ['jpg', 'png', 'jpeg', 'gif'];
+    return in_array($image_file_type, $acceptable_format);
+}
+
+// This function will compress and save the image
+function compress_and_save_image($source_url, $destination_url, $quality) {
+
+    $info = getimagesize($source_url);
+
+    if ($info['mime'] == 'image/jpeg')
+        $image = imagecreatefromjpeg($source_url);
+
+    elseif ($info['mime'] == 'image/gif')
+        $image = imagecreatefromgif($source_url);
+
+    elseif ($info['mime'] == 'image/png')
+        $image = imagecreatefrompng($source_url);
+
+    return imagejpeg($image, $destination_url, $quality);
+
+}
+
+
+function create_thumb_img($actual_img_path, $thump_path, $thump_width, $thump_height) {
+    list($width, $height) = getimagesize($actual_img_path);
+    // create an image identifier representing the size of thumb image we want to create
+    $create_thumb = imagecreatetruecolor($thump_width, $thump_height);
+    $actual_image_extension = pathinfo($actual_img_path, PATHINFO_EXTENSION);
+
+    $source = null;
+    switch ($actual_image_extension) {
+        case 'jpg' || 'jpeg' :
+            $source = imagecreatefromjpeg($actual_img_path);
+            break;
+        case 'png' :
+            $source = imagecreatefromjpeg($actual_img_path);
+            break;
+        case 'gif' :
+            $source = imagecreatefromgif($actual_img_path);
+            break;
+        default:
+            $source = imagecreatefromjpeg($actual_img_path);
+    }
+
+    $image_resized = imagecopyresized($create_thumb, $source, 0, 0,0,0, $thump_width, $thump_height, $width, $height);
+
+    if ($image_resized && $source !== null) {
+        if ($actual_image_extension === 'jpg' || $actual_image_extension === 'jpeg') {
+            return imagejpeg($create_thumb, $thump_path, 80);
+        } else if ($actual_image_extension === 'png') {
+            return imagepng($create_thumb, $thump_path, 80);
+        } else if ($actual_image_extension === 'gif') {
+            return imagegif($create_thumb, $thump_path, 80);
+        }
+    }
+
+}
+
 ?>
