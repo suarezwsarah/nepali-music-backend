@@ -17,9 +17,9 @@ $(function () {
 
     var $formAddArtist = $('#addArtistForm');
 
-    var $modalError = $('#modalErrors');
+    var $modalMessages = $('#modalMessages');
 
-    var templateModalError = $('#templateModalError');
+    var templateModalMessages = $('#templateModalMessages');
 
     var $artistFileUploadInput = $('#artistFileUploadInput');
 
@@ -65,15 +65,17 @@ $(function () {
             if(value) {
                 listHtml += templateHtml.replace(/{{firstName}}/g, value.first_name)
                     .replace(/{{lastName}}/g, value.last_name)
+                    .replace(/{{imgUrl}}/g, value.img_url)
                     .replace(/{{id}}/g, value.id);
             }
         });
         return listHtml;
     }
 
-    function buildModalHtml(msg) {
-        var templateHtml = templateModalError.html();
-        return templateHtml.replace(/{{errorMessage}}/g, msg);
+    function buildModalHtml(msg, type) {
+        var templateHtml = templateModalMessages.html();
+        return templateHtml.replace(/{{msg}}/g, msg)
+            .replace(/{{msgType}}/g, type);
     }
 
 
@@ -108,7 +110,7 @@ $(function () {
     // make a call to server to make sure file with
     // same name doesn't exist
     $artistFileUploadInput.on('change', function () {
-        $modalError.html('');
+        $modalMessages.html('');
         var fileName = $(this).val().split('\\').pop().replace(' ', '');
         $.ajax({
             url : 'ajax_add_artist.php?check_img=' + fileName,
@@ -118,8 +120,8 @@ $(function () {
                     var obj = JSON.parse(data);
                     console.log(obj);
                     if (obj.exists) {
-                        var modalHtml = buildModalHtml('The image already exists in server');
-                        $modalError.html(modalHtml);
+                        var modalHtml = buildModalHtml('The image already exists in server', 'danger');
+                        $modalMessages.html(modalHtml);
                         $btnAddArtist.prop('disabled', true);
                     } else {
                         $btnAddArtist.prop('disabled', false);
@@ -133,8 +135,8 @@ $(function () {
         e.preventDefault();
         var form = $formAddArtist[0];
         var data = new FormData(form);
-        data.append('name', 'Sam');
-        data.append('city', 'Chicago');
+        data.append('artist_first_name', 'Sam');
+        data.append('artist_last_name', 'Dahal');
         $.ajax({
             url : 'ajax_add_artist.php',
             data : data,
@@ -142,8 +144,15 @@ $(function () {
             cache: false,
             processData: false,
             contentType: false,
-            success : function (data, status) {
-                $modalError.html(data);
+            success : function (response, status) {
+                var obj = JSON.parse(response);
+                if (obj) {
+                    $modalMessages.html(buildModalHtml(obj.msg, 'success'));
+                    setTimeout(function () {
+                        $addEditArtistModal.modal('hide');
+                        ArtistCrud.readAll();
+                    }, 2000)
+                }
             }
         });
     });
@@ -152,7 +161,7 @@ $(function () {
     $addEditArtistModal.on('hidden.bs.modal', function(){
         $(this).find('form')[0].reset();
         $btnAddArtist.prop('disabled', false);
-        $modalError.html('');
+        $modalMessages.html('');
     });
 
 });

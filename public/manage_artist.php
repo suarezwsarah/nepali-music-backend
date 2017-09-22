@@ -66,7 +66,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="col-md-12 col-sm-12" id="modalErrors">
+                        <div class="col-md-12 col-sm-12" id="modalMessages">
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -108,7 +108,7 @@
 <script type="text/template" id="templateArtistTr">
     <tr>
         <td contenteditable onblur="ArtistCrud.update('{{id}}', this)">{{firstName}} {{lastName}}</td>
-        <td><span class="category_img"><img src="#"/></span></td>
+        <td><span class="category_img"><img src="{{imgUrl}}"/></span></td>
         <td>
             <a href="#" class="btn btn-primary"><i class="fa fa-edit"></i></a>
             <a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
@@ -116,11 +116,11 @@
     </tr>
 </script>
 
-<script type="text/template" id="templateModalError">
-    <div class="alert alert-danger alert-dismissible" role="alert">
+<script type="text/template" id="templateModalMessages">
+    <div class="alert alert-{{msgType}} alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">×</span>
         </button>
-        <p>{{errorMessage}}</p>
+        <p>{{msg}}</p>
     </div>
 </script>

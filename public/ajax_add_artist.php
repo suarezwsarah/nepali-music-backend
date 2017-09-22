@@ -30,6 +30,17 @@ if (is_get_request()) {
 
 if (is_post_request()) {
 
+    $artist_first_name = $_POST['artist_first_name'] ?? '';
+    $artist_last_name = $_POST['artist_last_name'] ?? '';
+
+    if (is_blank($artist_first_name)) {
+        $errors[] = 'Artist name is required';
+    }
+
+    if (is_blank($artist_last_name)) {
+        $errors[] = 'Artist last name is required';
+    }
+
     // Check if artist has image in ajax request
     $has_image = has_img_file('artist_image');
 
@@ -66,6 +77,12 @@ if (is_post_request()) {
             // also create the thumb of the image
             $thumb_path = $img_dir . 'thumbs/' . $img_name;
             $thumb_img_created = create_thumb_img($img_path, $thumb_path, 200, 200);
+
+            // insert into artist
+            $thumb_server_path = url_for('/images/thumbs/') . $img_name;
+            $fields = ['first_name' => $artist_first_name, 'last_name' => $artist_last_name, 'img_url' => $thumb_server_path, 'active' => 1];
+            $add_artist =  insert_table('artist', $fields);
+
             if ($uploaded) {
                 $succeed_msg = 'Sucessfully uploaded the image';
                 $results['status'] = 'true';
