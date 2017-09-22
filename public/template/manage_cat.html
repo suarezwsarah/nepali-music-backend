@@ -83,7 +83,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="btnAddCatModalSave" class="btn btn-primary">Save changes</button>
+                <button type="button" id="btnAddCatModalSave" class="btn btn-primary"><span>Save changes</span></button>
             </div>
         </div>
     </div>
@@ -97,8 +97,8 @@
                 id="category_sd_{{id}}" contenteditable>{{name}}
             </td>
             <td class="md-col-4">
-                <a href="" onclick="CategoryCrud.delete('{{id}}')" class="btn btn-default"><i
-                        class="fa fa-trash"></i></a>
+                <button onclick="CategoryCrud.delete('{{id}}')" class="btn btn-danger"><i
+                        class="fa fa-trash"></i></button>
             </td>
         </tr>
     </script>

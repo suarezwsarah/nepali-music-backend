@@ -4,13 +4,22 @@
 <?php
 
 // return only 1 artist if the url has artist id
-$has_id = $_GET && array_key_exists('id', $_GET) && !is_blank($_GET['id']) ?? false;
-$has_search_key = $_GET && !is_blank($_GET['search_txt']);
+$has_id = is_get_defined('id');
+$has_search_key = is_get_defined('search_txt');
 
 $results = [];
 
 if ($has_id) {
-
+    $result_artists = [];
+    $artists = find_results_query('artist', 'id', $_GET['id']);
+    while ($current_artist = mysqli_fetch_assoc($artists)) {
+        $result_artists[] = $current_artist;
+    }
+    mysqli_free_result($artists);
+    db_disconnect($db);
+    $results['status'] = true;
+    $results['data'] = $result_artists;
+    echo json_encode($results);
 }
 else if ($has_search_key) {
     $result_artists = [];

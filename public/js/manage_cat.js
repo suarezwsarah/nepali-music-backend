@@ -37,7 +37,9 @@ $(function () {
             manageCatTblBody.html("");
             makeAjaxGetCall('ajax_manage_cat.php', function (response) {
                 var obj = JSON.parse(response);
-                manageCatTblBody.html(buildTrHtml(obj.data));
+                if (obj.data) {
+                    manageCatTblBody.html(buildTrHtml(obj.data));
+                }
             })
         },
 
@@ -58,8 +60,8 @@ $(function () {
         },
 
         delete : function (id) {
-            divManageCatTbl.addClass('loading');
-            tblCategory.addClass('no-display');
+            //divManageCatTbl.addClass('loading');
+            //tblCategory.addClass('no-display');
             id = id.trim();
             $.ajax({
                 url : 'ajax_delete_cat.php',
@@ -81,8 +83,10 @@ $(function () {
         var listHtml = "";
         $.each(items, function(key, value) {
             if(value) {
-                listHtml += templateHtml.replace(/{{name}}/g, value.name)
-                    .replace(/{{id}}/g, value.id);
+                if (templateHtml) {
+                    listHtml += templateHtml.replace(/{{name}}/g, value.name)
+                        .replace(/{{id}}/g, value.id);
+                }
             }
         });
         return listHtml;

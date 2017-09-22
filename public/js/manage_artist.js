@@ -23,9 +23,45 @@ $(function () {
 
     var $artistFileUploadInput = $('#artistFileUploadInput');
 
+    var $inputArtistFirstName = $('#inputArtistFirstName');
+    var $inputArtistLastName = $('#inputArtistLastName');
+    var $imgArtistEditDisplay = $('#imgAristEditDisplay');
+
+    $btnAddArtist.prop('disabled', true);
+
+    $inputArtistFirstName.on('keyup', function () {
+        var firstName = $(this).val().trim();
+        var lastName = $inputArtistLastName.val().trim();
+        if (firstName.length > 2 && lastName.length > 2) {
+            $btnAddArtist.prop('disabled', false);
+        } else {
+            $btnAddArtist.prop('disabled', true);
+        }
+    });
+
+    $inputArtistLastName.on('keyup', function () {
+        var lastName = $(this).val().trim();
+        var firstName = $inputArtistFirstName.val().trim();
+        if (lastName.length > 2 && firstName.length > 2) {
+            $btnAddArtist.prop('disabled', false);
+        } else {
+            $btnAddArtist.prop('disabled', true);
+        }
+    });
+
     window.ArtistCrud = {
         create : function () {
 
+        },
+
+        edit : function (id) {
+            $.get('ajax_get_artist?id=' + id, function (response, status) {
+                var obj = JSON.parse(response);
+                $inputArtistFirstName.val(obj.data[0].first_name);
+                $inputArtistLastName.val(obj.data[0].last_name);
+                $imgArtistEditDisplay.attr('src', obj.data[0].img_url);
+                $addEditArtistModal.modal('toggle');
+            });
         },
 
         readAll : function () {
@@ -53,8 +89,16 @@ $(function () {
             });
         },
 
-        delete : function () {
-
+        delete : function (id) {
+            id = id.trim();
+            $.ajax({
+                url : 'ajax_delete_artist.php',
+                type: 'POST',
+                data: 'id=' + id,
+                success : function (data, status) {
+                    ArtistCrud.readAll();
+                }
+            });
         }
     };
 
@@ -135,8 +179,8 @@ $(function () {
         e.preventDefault();
         var form = $formAddArtist[0];
         var data = new FormData(form);
-        data.append('artist_first_name', 'Sam');
-        data.append('artist_last_name', 'Dahal');
+        data.append('artist_first_name', $inputArtistFirstName.val().trim());
+        data.append('artist_last_name', $inputArtistLastName.val().trim());
         $.ajax({
             url : 'ajax_add_artist.php',
             data : data,
@@ -157,10 +201,11 @@ $(function () {
         });
     });
 
+
     // reset the modal when it is hidden
     $addEditArtistModal.on('hidden.bs.modal', function(){
         $(this).find('form')[0].reset();
-        $btnAddArtist.prop('disabled', false);
+        $btnAddArtist.prop('disabled', true);
         $modalMessages.html('');
     });
 

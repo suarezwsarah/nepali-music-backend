@@ -75,17 +75,23 @@
                                 <div class="section">
                                     <div class="section-body">
                                         <div class="form-group">
-                                            <label class="col-md-3 control-label">Artist Name :-</label>
+                                            <label class="col-md-3 control-label">First Name : </label>
                                             <div class="col-md-6">
-                                                <input type="text" name="artist_name" id="artist_name" value="Nabin K Bhattarai" class="form-control" required="">
+                                                <input type="text" name="artist_first_name" id="inputArtistFirstName" class="form-control" required="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-md-3 control-label">Artist Image :-</label>
+                                            <label class="col-md-3 control-label">Last Name : </label>
+                                            <div class="col-md-6">
+                                                <input type="text" name="artist_last_name" id="inputArtistLastName"  class="form-control" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">Image : </label>
                                             <div class="col-md-6">
                                                 <div class="fileupload_block">
                                                     <input type="file" name="artist_image" value="fileupload" id="artistFileUploadInput">
-                                                    <div class="fileupload_img"><img type="image" src="images/53272_nabink.jpg" alt="category image"></div>
+                                                    <div class="fileupload_img"><img type="image" id="imgAristEditDisplay" src="" alt="category image"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -110,8 +116,8 @@
         <td contenteditable onblur="ArtistCrud.update('{{id}}', this)">{{firstName}} {{lastName}}</td>
         <td><span class="category_img"><img src="{{imgUrl}}"/></span></td>
         <td>
-            <a href="#" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-            <a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+            <button onclick="ArtistCrud.edit('{{id}}')" class="btn btn-primary"><i class="fa fa-edit"></i></button>
+            <button onclick="ArtistCrud.delete('{{id}}');" class="btn btn-danger"><i class="fa fa-trash"></i></button>
         </td>
     </tr>
 </script>
