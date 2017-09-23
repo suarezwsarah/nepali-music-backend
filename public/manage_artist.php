@@ -72,6 +72,7 @@
                     <div class="col-md-12">
                         <div class="card-body mrg_bottom">
                             <form action="#" id="addArtistForm" name="addartist" method="post" class="form form-horizontal" enctype="multipart/form-data">
+                                <input type="hidden" id="hiddenInputArtistId"/>
                                 <div class="section">
                                     <div class="section-body">
                                         <div class="form-group">

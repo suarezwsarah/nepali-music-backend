@@ -194,4 +194,8 @@ function create_thumb_img($actual_img_path, $thump_path, $thump_width, $thump_he
 
 }
 
+function delete_image($path) {
+    return unlink($path);
+}
+
 ?>

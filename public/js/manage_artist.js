@@ -2,6 +2,11 @@
 
 $(function () {
 
+    // initially set update artist to false
+    // if we need to then we can set it to true
+    var updateArtist = false;
+    var $hiddenInputArtistId = $('#hiddenInputArtistId');
+
     var templateArtistTr = $('#templateArtistTr');
     var manageArtistTblBody = $('#manageArtistTblBody');
 
@@ -57,9 +62,11 @@ $(function () {
         edit : function (id) {
             $.get('ajax_get_artist?id=' + id, function (response, status) {
                 var obj = JSON.parse(response);
+                $hiddenInputArtistId.val(id);
                 $inputArtistFirstName.val(obj.data[0].first_name);
                 $inputArtistLastName.val(obj.data[0].last_name);
                 $imgArtistEditDisplay.attr('src', obj.data[0].img_url);
+                updateArtist = true; // this is a request for updating the existing artist
                 $addEditArtistModal.modal('toggle');
             });
         },
@@ -96,6 +103,7 @@ $(function () {
                 type: 'POST',
                 data: 'id=' + id,
                 success : function (data, status) {
+                    console.log(data);
                     ArtistCrud.readAll();
                 }
             });
@@ -176,13 +184,18 @@ $(function () {
     });
 
     $btnAddArtist.on('click', function (e) {
+        var url = updateArtist === true ? 'ajax_edit_artist.php' : 'ajax_add_artist';
         e.preventDefault();
         var form = $formAddArtist[0];
         var data = new FormData(form);
         data.append('artist_first_name', $inputArtistFirstName.val().trim());
         data.append('artist_last_name', $inputArtistLastName.val().trim());
+        if (updateArtist) {
+            data.append('artist_id', $hiddenInputArtistId.val().trim());
+            $hiddenInputArtistId.val('');
+        }
         $.ajax({
-            url : 'ajax_add_artist.php',
+            url : url,
             data : data,
             type : 'POST',
             cache: false,
@@ -192,6 +205,10 @@ $(function () {
                 var obj = JSON.parse(response);
                 if (obj) {
                     $modalMessages.html(buildModalHtml(obj.msg, 'success'));
+                    // reset the call once successfull if this case is update artist
+                    if (updateArtist) {
+                        updateArtist = false;
+                    }
                     setTimeout(function () {
                         $addEditArtistModal.modal('hide');
                         ArtistCrud.readAll();
@@ -207,6 +224,7 @@ $(function () {
         $(this).find('form')[0].reset();
         $btnAddArtist.prop('disabled', true);
         $modalMessages.html('');
+        $imgArtistEditDisplay.attr('src', '');
     });
 
 });
