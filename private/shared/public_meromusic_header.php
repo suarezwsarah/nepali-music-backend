@@ -30,18 +30,18 @@
                         <div class="title">Dashboard</div>
                     </a>
                 </li>
-                <li><a href="<?php echo url_for('manage_cat.php'); ?>" id="linkCategories" data-url="<?php echo url_for('manage_cat.php'); ?>">
+                <li><a href="<?php echo url_for('category.php'); ?>" id="linkCategories" data-url="<?php echo url_for('category.php'); ?>">
                         <div class="icon"> <i class="fa fa-sitemap" aria-hidden="true"></i> </div>
                         <div class="title">Categories</div>
                     </a>
                 </li>
-                <li> <a href="<?php echo url_for('manage_artist.php'); ?>" id="linkArtists">
+                <li> <a href="<?php echo url_for('artist.php'); ?>" id="linkArtists">
                         <div class="icon"> <i class="fa fa-buysellads" aria-hidden="true"></i> </div>
                         <div class="title">Artist</div>
                     </a>
                 </li>
 
-                <li> <a href="<?php echo url_for('manage_mp3.php'); ?>" id="linkMp3">
+                <li> <a href="<?php echo url_for('mp3.php'); ?>" id="linkMp3">
                         <div class="icon"> <i class="fa fa-music" aria-hidden="true"></i> </div>
                         <div class="title">Mp3 Songs</div>
                     </a>

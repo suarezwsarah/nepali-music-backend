@@ -1,71 +1,126 @@
 <?php require_once('../private/initialize.php'); ?>
 
 <?php
-
-$preview = false;
-if(isset($_GET['preview'])) {
-  // previewing should require admin to be logged in
-  $preview = $_GET['preview'] == 'true' && is_logged_in() ? true : false;
+// If the user is already logged in simply redirect them to dashboard
+if (is_logged_in()) {
+    redirect_to(url_for('dashboard.php'));
 }
-$visible = !$preview;
 
-if(isset($_GET['id'])) {
-  $page_id = $_GET['id'];
-  $page = find_page_by_id($page_id, ['visible' => $visible]);
-  if(!$page) {
-    redirect_to(url_for('/index.php'));
-  }
-  $subject_id = $page['subject_id'];
-  $subject = find_subject_by_id($subject_id, ['visible' => $visible]);
-  if(!$subject) {
-    redirect_to(url_for('/index.php'));
-  }
 
-} elseif(isset($_GET['subject_id'])) {
-  $subject_id = $_GET['subject_id'];
-  $subject = find_subject_by_id($subject_id, ['visible' => $visible]);
-  if(!$subject) {
-    redirect_to(url_for('/index.php'));
-  }
-  $page_set = find_pages_by_subject_id($subject_id, ['visible' => $visible]);
-  $page = mysqli_fetch_assoc($page_set); // first page
-  mysqli_free_result($page_set);
-  if(!$page) {
-    redirect_to(url_for('/index.php'));
-  }
-  $page_id = $page['id'];
-} else {
-  // nothing selected; show the homepage
+// Perform the login
+$errors = [];
+$username = '';
+$password = '';
+
+if (is_post_request()) {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    // Validations
+    if (is_blank($username)) {
+        $errors[] = "Username cannot be blank.";
+    }
+    if (is_blank($password)) {
+        $errors[] = "Password cannot be blank.";
+    }
+
+    // if there were no errors, try to login
+    if (empty($errors)) {
+        // Using one variable ensures that msg is the same
+        $login_failure_msg = "Log in was unsuccessful.";
+
+        $admin = find_admin_by_username($username);
+        if ($admin) {
+
+            if (password_verify($password, $admin['hashed_password'])) {
+                // password matches
+                log_in_admin($admin);
+                redirect_to(url_for('dashboard.php'));
+
+            } else {
+                // username found, but password does not match
+                $errors[] = $login_failure_msg;
+            }
+
+        } else {
+            // no username found
+            $errors[] = $login_failure_msg;
+        }
+
+    }
+
 }
+
 
 ?>
 
-<?php include(SHARED_PATH . '/public_header.php'); ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mero Music</title>
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/vendor.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/flat-admin.css'); ?>">
 
-<div id="main">
+    <!-- Theme -->
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/blue.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/blue-sky.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/red.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/yellow.css'); ?>">
+    <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
+    <script src="<?php echo url_for('/js/login.js'); ?>"></script>
 
-  <?php include(SHARED_PATH . '/public_navigation.php'); ?>
-
-  <div id="page">
-
-    <?php
-      if(isset($page)) {
-        // show the page from the database
-        $allowed_tags = '<div><img><h1><h2><p><br><strong><em><ul><li>';
-        echo strip_tags($page['content'], $allowed_tags);
-
-      } else {
-        // Show the homepage
-        // The homepage content could:
-        // * be static content (here or in a shared file)
-        // * show the first page from the nav
-        // * be in the database but add code to hide in the nav
-        include(SHARED_PATH . '/static_homepage.php');
-      }
-    ?>
-
-  </div>
-
+</head>
+<body>
+<div class="app app-default">
+    <div class="app-container app-login">
+        <div class="flex-center">
+            <div class="app-body">
+                <div class="app-block">
+                    <div class="app-form login-form">
+                        <div class="form-header">
+                            <div class="app-brand">Mero Music</div>
+                        </div>
+                        <div class="login_title_lineitem">
+                            <div class="line_1"></div>
+                            <div class="flipInX-1 blind icon">
+					 <span class="icon">
+						 <i class="fa fa-gg"></i>&nbsp;
+						 <i class="fa fa-gg"></i>&nbsp;
+						 <i class="fa fa-gg"></i>
+				   </span>
+                            </div>
+                            <div class="line_2"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <form action="index.php" method="post">
+                            <div class="input-group" style="border:0px;">
+                                <?php echo display_my_errors($errors); ?>
+                            </div>
+                            <div class="input-group"><span class="input-group-addon" id="basic-addon1"> <i
+                                            class="fa fa-user" aria-hidden="true"></i></span>
+                                <input type="text" name="username" id="username" class="form-control"
+                                       placeholder="Username" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group"><span class="input-group-addon" id="basic-addon2"> <i
+                                            class="fa fa-key" aria-hidden="true"></i></span>
+                                <input type="password" name="password" id="password" class="form-control"
+                                       placeholder="Password" aria-describedby="basic-addon2">
+                            </div>
+                            <div class="text-center">
+                                <input type="submit" id="btnLogin" class="btn btn-success btn-submit" value="Login">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<?php include(SHARED_PATH . '/public_footer.php'); ?>
+
+</body>
+</html>

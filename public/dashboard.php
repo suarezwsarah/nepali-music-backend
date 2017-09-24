@@ -30,7 +30,7 @@ $num_mp3s = tbl_count_query('mp3');
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="manage_cat.php"
+    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="category.php"
                                                          class="card card-banner card-green-light">
             <div class="card-body"><i class="icon fa fa-sitemap fa-4x"></i>
                 <div class="content">
@@ -40,7 +40,7 @@ $num_mp3s = tbl_count_query('mp3');
             </div>
         </a>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="manage_artist.php"
+    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="artist.php"
                                                          class="card card-banner card-green-light">
             <div class="card-body"><i class="icon fa fa-buysellads fa-4x"></i>
                 <div class="content">
@@ -50,7 +50,7 @@ $num_mp3s = tbl_count_query('mp3');
             </div>
         </a>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="manage_mp3.php"
+    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="mp3.php"
                                                          class="card card-banner card-yellow-light">
             <div class="card-body"><i class="icon fa fa-music fa-4x"></i>
                 <div class="content">

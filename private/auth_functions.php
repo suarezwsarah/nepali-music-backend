@@ -46,7 +46,7 @@
       $request_page_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING'];
       do_audit_log('URL', $request_page_uri);
       //$_SESSION['page_to_redirect'] = $request_page_uri;
-      redirect_to(url_for('/mp3_index.php'));
+      redirect_to(url_for('/index.php'));
     } else {
       // Do nothing, let the rest of the page proceed
     }

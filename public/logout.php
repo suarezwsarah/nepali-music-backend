@@ -3,6 +3,6 @@
 <?php
 
 log_out_admin();
-redirect_to(url_for('mp3_index.php'));
+redirect_to(url_for('index.php'));
 
 ?>
