@@ -5,7 +5,7 @@
 $errors =  ['Error occured!!! not sure what you were really expecting..']
 ?>
 
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<?php include(SHARED_PATH . '/public_header.php'); ?>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -28,4 +28,4 @@ $errors =  ['Error occured!!! not sure what you were really expecting..']
 </div>
 
 
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>

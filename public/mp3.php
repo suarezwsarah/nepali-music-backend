@@ -8,7 +8,10 @@ $results = mysqli_query($db, $sql);
 confirm_result_set($results);
 
 ?>
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+
+<?php $page_title = 'mp3';  ?>
+
+<?php include(SHARED_PATH . '/public_header.php'); ?>
 <div class="row">
     <div class="col-xs-12">
         <div class="card mrg_bottom">
@@ -51,8 +54,8 @@ confirm_result_set($results);
 -->
                                     <a href="mp3.php?status_active_id=" title="Change Status"><span class="badge badge-danger badge-icon"><i class="fa fa-check" aria-hidden="true"></i><span>Disable </span></span></a>
                             </td>
-                            <td><a href="edit_mp3.php?id=<?php echo $result['id'] ?>" class="btn btn-primary">Edit</a>
-                                <a href="?mp3_id=" class="btn btn-default" onclick="return confirm('Are you sure you want to delete this song?');">Delete</a></td>
+                            <td><a href="edit_mp3.php?id=<?php echo $result['id'] ?>" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                <a href="?mp3_id=" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this song?');"><i class="fa fa-trash"></i></a></td>
                         </tr>
                     <?php } // end while ?>
                     </tbody>
@@ -69,4 +72,4 @@ confirm_result_set($results);
         </div>
     </div>
 </div>
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>

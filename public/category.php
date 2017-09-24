@@ -1,9 +1,11 @@
 <?php require_once('../private/initialize.php'); ?>
 <?php require_login(); ?>
 
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<?php $page_title = 'categories';  ?>
 
-<script src="<?php echo get_js('manage_cat'); ?>"></script>
+<?php $javascript_files = ['manage_cat']; // arrays of js file need for this script ?>
+
+<?php include(SHARED_PATH . '/public_header.php'); ?>
 
 <div class="row">
     <div class="col-xs-12">
@@ -121,4 +123,4 @@
 </script>
 
 
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>

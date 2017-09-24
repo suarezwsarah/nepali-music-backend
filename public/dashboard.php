@@ -13,7 +13,10 @@ $num_mp3s = tbl_count_query('mp3');
 
 ?>
 
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<?php $page_title = 'dashboard';  ?>
+
+
+<?php include(SHARED_PATH . '/public_header.php'); ?>
 <div class="row">
     <div class="col-xs-12">
 
@@ -63,4 +66,4 @@ $num_mp3s = tbl_count_query('mp3');
 </div>
     </div>
 </div>
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>

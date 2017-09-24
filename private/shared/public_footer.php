@@ -1,12 +1,15 @@
-  <footer>
-    <p>Copyright <?php echo date('Y'); ?>, Globe Bank International </p>
-  </footer>
-
-  <p>This is a fictitious company created by <a href="http://linkedin.com">LinkedIn Corporation, or its affiliates</a>, solely for the creation and development of educational training materials. Any resemblance to real products or services is purely coincidental. Information provided about the products or services is also fictitious and should not be construed as representative of actual products or services on the market in a similar product or service category.</p>
-
-  </body>
+<footer class="app-footer">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="footer-copyright">Copyright © <?php echo date('Y');?> <a href="#" target="_blank">Music Online</a>. All Rights Reserved.</div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+<script type="text/javascript" src="<?php echo url_for('/js/vendor.js') ?>"></script>
+<script type="text/javascript" src="<?php echo url_for('/js/app.js') ?>"> </script>
+</body>
 </html>
 
-<?php
-  db_disconnect($db);
-?>
+<?php db_disconnect($db); ?>

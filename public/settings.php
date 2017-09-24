@@ -1,8 +1,4 @@
-<?php include("includes/header.php");
-
-	require("includes/function.php");
-	require("language/language.php");
-	 
+<?php
 	
 	$qry="SELECT * FROM tbl_settings where id='1'";
   $result=mysqli_query($mysqli,$qry);
@@ -129,8 +125,9 @@
 
 
 ?>
- 
-	 <div class="row">
+<?php include(SHARED_PATH . '/public_header.php'); ?>
+
+<div class="row">
       <div class="col-md-12">
         <div class="card">
 		  <div class="page_title_block">
@@ -339,5 +336,4 @@
       </div>
     </div>
 
-        
-<?php include("includes/footer.php");?>       
+<?php include(SHARED_PATH . '/public_footer.php'); ?>

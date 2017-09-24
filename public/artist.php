@@ -1,9 +1,12 @@
 <?php require_once('../private/initialize.php'); ?>
 <?php require_login(); ?>
 
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<?php $page_title = 'artist';  ?>
 
-<script src="<?php echo get_js('manage_artist'); ?>"></script>
+<?php $javascript_files = ['manage_artist']; // arrays of js file need for this script ?>
+
+<?php include(SHARED_PATH . '/public_header.php'); ?>
+
 <div class="row">
     <div class="col-xs-12">
     <div class="card mrg_bottom">
@@ -55,7 +58,7 @@
 </div>
 </div>
 
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>
 
 <!-- Modal -->
 <div class="modal fade" id="addEditArtistModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

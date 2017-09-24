@@ -83,7 +83,9 @@ if (is_post_request()) {
 
 ?>
 
-<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<?php $page_title = 'mp3'; ?>
+
+<?php include(SHARED_PATH . '/public_header.php'); ?>
 <style href="<?php echo get_stylesheet('flat-admin') ?>"></style>
 <script href="<?php echo get_js('app_template'); ?>"></script>
 
@@ -209,4 +211,4 @@ if (is_post_request()) {
 </div>
 
 
-<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>
+<?php include(SHARED_PATH . '/public_footer.php'); ?>
