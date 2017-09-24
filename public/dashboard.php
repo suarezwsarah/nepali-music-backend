@@ -13,7 +13,11 @@ $num_mp3s = tbl_count_query('mp3');
 
 ?>
 
-<div class="btn-floating" id="help-actions">
+<?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
+<div class="row">
+    <div class="col-xs-12">
+
+    <div class="btn-floating" id="help-actions">
     <div class="btn-bg"></div>
     <button type="button" class="btn btn-default btn-toggle" data-toggle="toggle" data-target="#help-actions"><i
                 class="icon fa fa-plus"></i> <span class="help-text">Shortcut</span></button>
@@ -26,7 +30,7 @@ $num_mp3s = tbl_count_query('mp3');
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="manage_category.php"
+    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><a href="manage_cat.php"
                                                          class="card card-banner card-green-light">
             <div class="card-body"><i class="icon fa fa-sitemap fa-4x"></i>
                 <div class="content">
@@ -57,3 +61,6 @@ $num_mp3s = tbl_count_query('mp3');
         </a>
     </div>
 </div>
+    </div>
+</div>
+<?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>

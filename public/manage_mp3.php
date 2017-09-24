@@ -8,9 +8,7 @@ $results = mysqli_query($db, $sql);
 confirm_result_set($results);
 
 ?>
-
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
-
 <div class="row">
     <div class="col-xs-12">
         <div class="card mrg_bottom">
@@ -71,5 +69,4 @@ confirm_result_set($results);
         </div>
     </div>
 </div>
-
 <?php include(SHARED_PATH . '/public_meromusic_footer.php'); ?>

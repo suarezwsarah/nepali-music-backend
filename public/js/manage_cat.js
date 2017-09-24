@@ -54,7 +54,7 @@ $(function () {
                     setTimeout(function () {
                         divManageCatTbl.removeClass('loading');
                         tblCategory.removeClass('no-display');
-                    }, 6000);
+                    }, 500);
                 }
             });
         },

@@ -85,6 +85,7 @@ if (is_post_request()) {
 
 <?php include(SHARED_PATH . '/public_meromusic_header.php'); ?>
 <style href="<?php echo get_stylesheet('flat-admin') ?>"></style>
+<script href="<?php echo get_js('app_template'); ?>"></script>
 
 <div class="row">
     <div class="col-md-12">

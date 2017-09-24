@@ -31,6 +31,17 @@ if (is_post_request()) {
     $has_image = has_img_file('artist_image');
 
     if ($has_image) {
+
+        // remove the previous image since this is a update
+        $artist = mysqli_fetch_assoc(find_results_query('artist', 'id', $_POST['artist_id']));
+
+        $image_url = SERVER_ROOT . url_for('/images/') . substr($artist['img_url'], strrpos($artist['img_url'], '/'));
+
+        $thumb_url = SERVER_ROOT . url_for('/images/thumbs/') . substr($artist['img_url'], strrpos($artist['img_url'], '/'));
+
+        unlink($image_url);
+        unlink($thumb_url);
+
         $file = $_FILES['artist_image'];
         // step 1 get image directory
         $img_dir = SERVER_ROOT . url_for('/images/');

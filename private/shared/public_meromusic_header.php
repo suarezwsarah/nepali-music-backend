@@ -25,23 +25,23 @@
         <div class="sidebar-menu">
             <ul class="sidebar-nav" id="navBar">
                 <li class="active">
-                    <a href="#" data-url="<?php echo url_for('dashboard.php')?>">
+                    <a href="<?php echo url_for('dashboard.php'); ?>" id="linkDashboard" data-url="<?php echo url_for('dashboard.php')?>">
                         <div class="icon"> <i class="fa fa-dashboard" aria-hidden="true"></i> </div>
                         <div class="title">Dashboard</div>
                     </a>
                 </li>
-                <li><a href="" id="linkCategories" data-url="<?php echo url_for('manage_cat.php'); ?>">
+                <li><a href="<?php echo url_for('manage_cat.php'); ?>" id="linkCategories" data-url="<?php echo url_for('manage_cat.php'); ?>">
                         <div class="icon"> <i class="fa fa-sitemap" aria-hidden="true"></i> </div>
                         <div class="title">Categories</div>
                     </a>
                 </li>
-                <li> <a href="#" id="linkArtists">
+                <li> <a href="<?php echo url_for('manage_artist.php'); ?>" id="linkArtists">
                         <div class="icon"> <i class="fa fa-buysellads" aria-hidden="true"></i> </div>
                         <div class="title">Artist</div>
                     </a>
                 </li>
 
-                <li> <a href="manage_mp3.php">
+                <li> <a href="<?php echo url_for('manage_mp3.php'); ?>" id="linkMp3">
                         <div class="icon"> <i class="fa fa-music" aria-hidden="true"></i> </div>
                         <div class="title">Mp3 Songs</div>
                     </a>
