@@ -1,4 +1,4 @@
-<?php require_once('../private/initialize.php'); ?>
+<?php require_once('../../private/initialize.php'); ?>
 <?php require_login(); ?>
 
 <?php
@@ -9,29 +9,11 @@ $artist_name = '';
 $succeed_msg = '';
 $results = [];
 
-if (is_get_request()) {
-
-    $is_check_img_req = is_get_defined('check_img');
-
-    if ($is_check_img_req) {
-        $image_file_name = SERVER_ROOT . url_for('/images/') . $_GET['check_img'];
-        $image_already_in_server = file_exists($image_file_name);
-        if ($image_already_in_server) {
-            $results['status'] = true;
-            $results['exists'] = true;
-        } else {
-            $results['status'] = true;
-            $results['exists'] = false;
-        }
-        echo json_encode($results);
-    }
-
-}
-
 if (is_post_request()) {
 
     $artist_first_name = $_POST['artist_first_name'] ?? '';
     $artist_last_name = $_POST['artist_last_name'] ?? '';
+    $artist_id = $_POST['artist_id'];
 
     if (is_blank($artist_first_name)) {
         $errors[] = 'Artist name is required';
@@ -41,10 +23,25 @@ if (is_post_request()) {
         $errors[] = 'Artist last name is required';
     }
 
+    if (is_blank($artist_id)) {
+        $errors[] = 'Artist id is required';
+    }
+
     // Check if artist has image in ajax request
     $has_image = has_img_file('artist_image');
 
     if ($has_image) {
+
+        // remove the previous image since this is a update
+        $artist = mysqli_fetch_assoc(find_results_query('artist', 'id', $_POST['artist_id']));
+
+        $image_url = SERVER_ROOT . url_for('/images/') . substr($artist['img_url'], strrpos($artist['img_url'], '/'));
+
+        $thumb_url = SERVER_ROOT . url_for('/images/thumbs/') . substr($artist['img_url'], strrpos($artist['img_url'], '/'));
+
+        unlink($image_url);
+        unlink($thumb_url);
+
         $file = $_FILES['artist_image'];
         // step 1 get image directory
         $img_dir = SERVER_ROOT . url_for('/images/');
@@ -80,8 +77,8 @@ if (is_post_request()) {
 
             // insert into artist
             $thumb_server_path = url_for('/images/thumbs/') . $img_name;
-            $fields = ['first_name' => $artist_first_name, 'last_name' => $artist_last_name, 'img_url' => $thumb_server_path, 'active' => 1];
-            $add_artist =  insert_table('artist', $fields);
+            $fields = ['id' => $artist_id, 'first_name' => $artist_first_name, 'last_name' => $artist_last_name, 'img_url' => $thumb_server_path, 'active' => 1];
+            $update_artist =  update_table('artist', $fields);
 
             if ($uploaded) {
                 $succeed_msg = 'Sucessfully uploaded the image';

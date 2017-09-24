@@ -21,7 +21,7 @@ $(function () {
 
     window.CategoryCrud = {
         create : function (categoryName) {
-            var url = 'ajax_add_cat.php';
+            var url = 'ajax/ajax_add_cat.php';
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -35,7 +35,7 @@ $(function () {
 
         readAll : function () {
             manageCatTblBody.html("");
-            makeAjaxGetCall('ajax_manage_cat.php', function (response) {
+            makeAjaxGetCall('ajax/ajax_manage_cat.php', function (response) {
                 var obj = JSON.parse(response);
                 if (obj.data) {
                     manageCatTblBody.html(buildTrHtml(obj.data));
@@ -47,7 +47,7 @@ $(function () {
             divManageCatTbl.addClass('loading');
             tblCategory.addClass('no-display');
             $.ajax({
-                url: "ajax_edit_cat.php",
+                url: "ajax/ajax_edit_cat.php",
                 type: "POST",
                 data: 'cat_id=' + id + '&category_name=' + elm.innerHTML,
                 success: function (data, status) {
@@ -64,7 +64,7 @@ $(function () {
             //tblCategory.addClass('no-display');
             id = id.trim();
             $.ajax({
-                url : 'ajax_delete_cat.php',
+                url : 'ajax/ajax_delete_cat.php',
                 type: 'POST',
                 data: 'id=' + id,
                 success : function (data, status) {
@@ -138,7 +138,7 @@ $(function () {
 
     fieldModalCategoryName.keyup(function () {
         var currentVal = $(this).val();
-        $.get('ajax_manage_cat.php?action=count&name='+currentVal, function (response, data) {
+        $.get('ajax/ajax_manage_cat.php?action=count&name='+currentVal, function (response, data) {
             var result = JSON.parse(response);
             if (result.row === "1") {
                 console.log(result.row);

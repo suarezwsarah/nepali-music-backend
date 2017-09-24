@@ -72,7 +72,7 @@ $(function () {
         },
 
         readAll : function () {
-            $.get('ajax_get_artist', function (response, status) {
+            $.get('ajax/ajax_get_artist', function (response, status) {
                 var obj = JSON.parse(response);
                 var artists = obj.data;
                 manageArtistTblBody.html(buildTrHtml(artists));
@@ -83,7 +83,7 @@ $(function () {
             divManageArtistTbl.addClass('loading');
             tblArtist.addClass('no-display');
             $.ajax({
-                url: "ajax_edit_artist.php",
+                url: "ajax/ajax_edit_artist.php",
                 type: "POST",
                 data: 'artist_id=' + id + '&first_name=' + elm.innerHTML,
                 success: function (data, status) {
@@ -99,7 +99,7 @@ $(function () {
         delete : function (id) {
             id = id.trim();
             $.ajax({
-                url : 'ajax_delete_artist.php',
+                url : 'ajax/ajax_delete_artist.php',
                 type: 'POST',
                 data: 'id=' + id,
                 success : function (data, status) {
@@ -136,7 +136,7 @@ $(function () {
     searArtistInputBox.keyup(function () {
         var searchKey = $(this).val().trim();
         if (searchKey.length > 0) {
-            var urlToSearch = "ajax_get_artist.php?search_txt=" + searchKey;
+            var urlToSearch = "ajax/ajax_get_artist.php?search_txt=" + searchKey;
             $.get(urlToSearch, function (response, status) {
                 console.log(response);
                 if (response) {
@@ -165,7 +165,7 @@ $(function () {
         $modalMessages.html('');
         var fileName = $(this).val().split('\\').pop().replace(' ', '');
         $.ajax({
-            url : 'ajax_add_artist.php?check_img=' + fileName,
+            url : 'ajax/ajax_add_artist.php?check_img=' + fileName,
             type : 'GET',
             success : function (data, status) {
                 if (data) {
@@ -184,7 +184,7 @@ $(function () {
     });
 
     $btnAddArtist.on('click', function (e) {
-        var url = updateArtist === true ? 'ajax_edit_artist.php' : 'ajax_add_artist';
+        var url = updateArtist === true ? 'ajax/ajax_edit_artist.php' : 'ajax/ajax_add_artist';
         e.preventDefault();
         var form = $formAddArtist[0];
         var data = new FormData(form);
