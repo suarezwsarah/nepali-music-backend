@@ -93,7 +93,7 @@ $(function () {
     }
 
     // loading data on doc ready
-    var manageCatAjaxUrl = "ajax_manage_cat.php";
+    var manageCatAjaxUrl = "ajax/ajax_manage_cat.php";
 
     CategoryCrud.readAll();
 

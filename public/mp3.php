@@ -1,75 +1,176 @@
-<?php require_once('../private/initialize.php'); ?>
-<?php require_login(); ?>
+<?php require_once('../private/initialize.php');
 
-<?php
+require_login();
 
-$sql = "SELECT * FROM mp3";
-$results = mysqli_query($db, $sql);
-confirm_result_set($results);
+function get_mp3s() {
+    global $db;
+    $sql = "SELECT * FROM mp3";
+    $results = mysqli_query($db, $sql);
+    confirm_result_set($results);
+    $ret_result = [];
+    while ($result = mysqli_fetch_assoc($results)) {
+        $ret_result[] = $result;
+    }
+    mysqli_free_result($results);
+    return $ret_result;
+}
 
+function get_selected_artists($id) {
+    $results = find_mp3_artist_by_mp3_id($id);
+    $ret_result = [];
+    while ($result = mysqli_fetch_assoc($results)) {
+        $ret_result[] = $result;
+    }
+    mysqli_free_result($results);
+    return $ret_result;
+}
+
+function get_selected_categories($id) {
+    $results = find_mp3_category_by_mp3_id($id);
+    $ret_result = [];
+    while ($result = mysqli_fetch_assoc($results)) {
+        $ret_result[] = $result;
+    }
+    mysqli_free_result($results);
+    return $ret_result;
+}
+
+function find_all_artists() {
+    $ret_result = [];
+    $results = find_all_from('artist');
+    while ($result = mysqli_fetch_assoc($results)) {
+        $ret_result[] = $result;
+    }
+    mysqli_free_result($results);
+    return $ret_result;
+}
+
+function get_all_categories() {
+    $ret_result = [];
+    $results = find_all_from('category');
+    while ($result = mysqli_fetch_assoc($results)) {
+        $ret_result[] = $result;
+    }
+    mysqli_free_result($results);
+    return $ret_result;
+}
+
+function is_edit() {
+    return is_get_defined('action') && $_GET['action'] === 'edit';
+}
+
+function is_add() {
+    return is_get_request() && is_get_defined('action') && $_GET['action'] === 'add';
+}
+
+$template_url = '';
+$template_vars = [];
+
+if (is_get_request()) {
+
+    if (is_edit()) {
+
+        $id = $_GET['id'];
+
+        $template_vars['errors'] = [];
+
+        $template_vars['succeed_msgs'] = [];
+
+        $template_vars['selected_artists'] = get_selected_artists($id);
+
+        $template_vars['all_artists'] = find_all_artists();
+
+        $template_vars['selected_categories'] = get_selected_categories($id);
+
+        $template_vars['all_categories'] = get_all_categories();
+
+        // Find the mp3
+        $template_vars['mp3'] = find_mp3_by_id($id);
+
+        $template_url = '/template/template_edit_mp3.php';
+
+    } elseif (is_add()) {
+
+        $template_url = '/template/template_edit_mp3.php';
+
+    } else {
+
+        $template_vars['mp3s'] =  get_mp3s();
+        $template_url = '/template/template_mp3.php';
+
+    }
+}
+
+if (is_post_request()) {
+
+    echo $is_edit = $_POST['id'] != null;
+
+    $errors = [];
+    $succeed_msgs = [];
+
+    if ($is_edit) {
+        $errors = validate_fields(['mp3_title' => 'Mp3 title','mp3_duration' => 'mp3 duration']);
+        $mp3_url = $_POST['mp3_url'];
+
+        if (!preg_match('/.mp3/', $mp3_url)) {
+            $errors[] = 'Invalid mp3 url';
+        }
+
+        $mp3_id = db_escape($db, $_POST['id']);
+
+        if (empty($errors)) {
+
+            $fields = ['id' => $_POST['id'], 'url' => $_POST['mp3_url'], 'duration' => $_POST['mp3_duration'], 'description' => h($_POST['mp3_description'])];
+            $updated = update_table('mp3', $fields);
+            if ($updated) {
+                $succeed_msgs[] = 'Sucessfully updated';
+            }
+
+            $artists = trimed_array($_POST['mp3_artist']);
+            $update_artist = update_artists($mp3_id, $artists);
+            if (!$update_artist) {
+                $errors[] = 'Failed to update artists';
+            } else {
+                do_audit_log('INFO', "${_SESSION['username']} updated artists");
+            }
+
+            // update categories
+            $categories = trimed_array($_POST['cat_ids']);
+            $update_categories = update_categories($mp3_id, $categories);
+            if ($update_categories) {
+                do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
+            } else {
+                $errors[] = 'Failed to update category';
+            }
+        }
+
+        $template_vars['selected_artists'] = get_selected_artists($mp3_id);
+
+        $template_vars['all_artists'] = find_all_artists();
+
+        $template_vars['selected_categories'] = get_selected_categories($mp3_id);
+
+        $template_vars['all_categories'] = get_all_categories();
+
+        // Find the mp3
+        $template_vars['mp3'] = find_mp3_by_id($mp3_id);
+
+        $template_vars['errors'] = $errors;
+
+        $template_vars['succeed_msgs'] = $succeed_msgs;
+
+        $template_url = '/template/template_edit_mp3.php';
+
+    }
+
+}
+
+
+$page_title = 'mp3';
+
+include(SHARED_PATH . '/public_header.php');
+include PUBLIC_PATH . $template_url;
+include(SHARED_PATH . '/public_footer.php');
+
+unset($template_vars);
 ?>
-
-<?php $page_title = 'mp3';  ?>
-
-<?php include(SHARED_PATH . '/public_header.php'); ?>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="card mrg_bottom">
-            <div class="page_title_block">
-                <div class="col-md-5 col-xs-12">
-                    <div class="page_title">Manage Mp3</div>
-                </div>
-                <div class="col-md-7 col-xs-12">
-                    <div class="search_list">
-                        <div class="add_btn_primary"> <a href="add_mp3.php">Add Mp3</a> </div>
-                    </div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="row mrg-top">
-                <div class="col-md-12">
-
-                    <div class="col-md-12 col-sm-12">
-                        <!-- error code goes here-->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 mrg-top">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th class="cat_action_list">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php while ($result = mysqli_fetch_assoc($results)) { ?>
-                        <tr>
-                            <td><?php echo $result['title']; ?></td>
-                            <td>Title</td>
-                            <td>
-<!--                                    <a href="manage_mp3.php?status_deactive_id=" title="Change Status"><span class="badge badge-success badge-icon"><i class="fa fa-check" aria-hidden="true"></i><span>Enable</span></span></a>
--->
-                                    <a href="mp3.php?status_active_id=" title="Change Status"><span class="badge badge-danger badge-icon"><i class="fa fa-check" aria-hidden="true"></i><span>Disable </span></span></a>
-                            </td>
-                            <td><a href="edit_mp3.php?id=<?php echo $result['id'] ?>" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-                                <a href="?mp3_id=" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this song?');"><i class="fa fa-trash"></i></a></td>
-                        </tr>
-                    <?php } // end while ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-12 col-xs-12">
-                <div class="pagination_item_block">
-    <!--                <nav>
-                        <?php /*include("pagination.php");*/?>
-                    </nav>-->
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-</div>
-<?php include(SHARED_PATH . '/public_footer.php'); ?>
