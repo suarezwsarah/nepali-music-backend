@@ -2,7 +2,8 @@
 
 require_login();
 
-function get_mp3s() {
+function get_mp3s()
+{
     global $db;
     $sql = "SELECT * FROM mp3";
     $results = mysqli_query($db, $sql);
@@ -15,7 +16,8 @@ function get_mp3s() {
     return $ret_result;
 }
 
-function get_selected_artists($id) {
+function get_selected_artists($id)
+{
     $results = find_mp3_artist_by_mp3_id($id);
     $ret_result = [];
     while ($result = mysqli_fetch_assoc($results)) {
@@ -25,7 +27,8 @@ function get_selected_artists($id) {
     return $ret_result;
 }
 
-function get_selected_categories($id) {
+function get_selected_categories($id)
+{
     $results = find_mp3_category_by_mp3_id($id);
     $ret_result = [];
     while ($result = mysqli_fetch_assoc($results)) {
@@ -35,7 +38,8 @@ function get_selected_categories($id) {
     return $ret_result;
 }
 
-function find_all_artists() {
+function find_all_artists()
+{
     $ret_result = [];
     $results = find_all_from('artist');
     while ($result = mysqli_fetch_assoc($results)) {
@@ -45,7 +49,8 @@ function find_all_artists() {
     return $ret_result;
 }
 
-function get_all_categories() {
+function get_all_categories()
+{
     $ret_result = [];
     $results = find_all_from('category');
     while ($result = mysqli_fetch_assoc($results)) {
@@ -55,11 +60,13 @@ function get_all_categories() {
     return $ret_result;
 }
 
-function is_edit() {
+function is_edit()
+{
     return is_get_defined('action') && $_GET['action'] === 'edit';
 }
 
-function is_add() {
+function is_add()
+{
     return is_get_request() && is_get_defined('action') && $_GET['action'] === 'add';
 }
 
@@ -71,7 +78,7 @@ $template_vars = [
     'all_artists' => find_all_artists(),
     'selected_categories' => [],
     'all_categories' => get_all_categories(),
-    'mp3' => ['id' => '', 'url' => '', 'description'=>'', 'title' => '', 'duration' => '']
+    'mp3' => ['id' => '', 'url' => '', 'description' => '', 'title' => '', 'duration' => '']
 
 ];
 
@@ -98,71 +105,70 @@ if (is_get_request()) {
 
     } else {
 
-        $template_vars['mp3s'] =  get_mp3s();
+        $template_vars['mp3s'] = get_mp3s();
 
     }
 }
 
 if (is_post_request()) {
 
-    echo $is_edit = $_POST['id'] != null;
-
     $errors = [];
     $succeed_msgs = [];
 
-    if ($is_edit) {
-        $errors = validate_fields(['mp3_title' => 'Mp3 title','mp3_duration' => 'mp3 duration']);
-        $mp3_url = $_POST['mp3_url'];
+    $errors = validate_fields(['mp3_title' => 'Mp3 title', 'mp3_duration' => 'mp3 duration']);
+    $mp3_url = $_POST['mp3_url'];
 
-        if (!preg_match('/.mp3/', $mp3_url)) {
-            $errors[] = 'Invalid mp3 url';
-        }
+    if (!preg_match('/.mp3/', $mp3_url)) {
+        $errors[] = 'Invalid mp3 url';
+    }
 
-        $mp3_id = db_escape($db, $_POST['id']);
+    $mp3_id = $_POST['id'] ?? '';
 
-        if (empty($errors)) {
-
-            $fields = ['id' => $_POST['id'], 'url' => $_POST['mp3_url'], 'duration' => $_POST['mp3_duration'], 'description' => h($_POST['mp3_description'])];
+    if (empty($errors)) {
+        $fields = ['url' => $_POST['mp3_url'], 'title' => $_POST['mp3_title'], 'duration' => $_POST['mp3_duration'], 'description' => h($_POST['mp3_description'])];
+        if (is_blank($mp3_id)) {
+            $mp3_id = insert_table('mp3', $fields);
+            if ($mp3_id) {
+                $succeed_msgs[] = 'Sucessfully added mp3';
+            }
+        } else {
+            $fields['id'] = $mp3_id;
             $updated = update_table('mp3', $fields);
             if ($updated) {
                 $succeed_msgs[] = 'Sucessfully updated';
             }
-
-            $artists = trimed_array($_POST['mp3_artist']);
-            $update_artist = update_artists($mp3_id, $artists);
-            if (!$update_artist) {
-                $errors[] = 'Failed to update artists';
-            } else {
-                do_audit_log('INFO', "${_SESSION['username']} updated artists");
-            }
-
-            // update categories
-            $categories = trimed_array($_POST['cat_ids']);
-            $update_categories = update_categories($mp3_id, $categories);
-            if ($update_categories) {
-                do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
-            } else {
-                $errors[] = 'Failed to update category';
-            }
         }
 
-        $template_vars['selected_artists'] = get_selected_artists($mp3_id);
 
-        $template_vars['selected_categories'] = get_selected_categories($mp3_id);
+        $artists = trimed_array($_POST['mp3_artist']);
+        $update_artist = update_artists($mp3_id, $artists);
+        if (!$update_artist) {
+            $errors[] = 'Failed to update artists';
+        } else {
+            do_audit_log('INFO', "${_SESSION['username']} updated artists");
+        }
 
-        // Find the mp3
-        $template_vars['mp3'] = find_mp3_by_id($mp3_id);
-
-        $template_vars['errors'] = $errors;
-
-        $template_vars['succeed_msgs'] = $succeed_msgs;
-
-
-    } else {
-        // add a new category
+        // update categories
+        $categories = trimed_array($_POST['cat_ids']);
+        $update_categories = update_categories($mp3_id, $categories);
+        if ($update_categories) {
+            do_audit_log('INFO', "${_SESSION['username']} updated category for mp3 id ${mp3_id}");
+        } else {
+            $errors[] = 'Failed to update category';
+        }
 
     }
 
+    $template_vars['selected_artists'] = get_selected_artists($mp3_id);
+
+    $template_vars['selected_categories'] = get_selected_categories($mp3_id);
+
+    // Find the mp3
+    $template_vars['mp3'] = find_mp3_by_id($mp3_id);
+
+    $template_vars['errors'] = $errors;
+
+    $template_vars['succeed_msgs'] = $succeed_msgs;
 }
 
 

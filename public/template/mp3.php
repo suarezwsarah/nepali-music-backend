@@ -1,4 +1,4 @@
-<?php if ((is_get_request() && is_edit()) || (is_get_request() && is_add()) || (is_post_request() && $_POST['id'] != null) ) { ?>
+<?php if ((is_get_request() && is_edit()) || (is_get_request() && is_add()) || (is_post_request() )) { ?>
 
     <?php $page_title = 'mp3'; ?>
     <div class="row">

@@ -770,7 +770,7 @@ function insert_table($table_name, $fields)
     $result = mysqli_query($db, $sql);
 
     if ($result) {
-        return true;
+        return mysqli_insert_id($db);
     } else {
         echo mysqli_error($db);
         db_disconnect($db);
