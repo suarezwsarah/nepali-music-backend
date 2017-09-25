@@ -7,8 +7,12 @@
 </footer>
 </div>
 </div>
-<script type="text/javascript" src="<?php echo url_for('/js/vendor.js') ?>"></script>
-<script type="text/javascript" src="<?php echo url_for('/js/app.js') ?>"> </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+
+<script>
+    $('.select2').select2();
+</script>
 </body>
 </html>
 
