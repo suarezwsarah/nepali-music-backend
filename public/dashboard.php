@@ -14,7 +14,7 @@ $template_vars = [
 
 include(SHARED_PATH . '/public_header.php');
 
-$template_file = PUBLIC_PATH . '/template/template_dashboard.php';
+$template_file = PUBLIC_PATH . '/template/dashboard.php';
 
 include($template_file);
 

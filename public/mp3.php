@@ -63,18 +63,23 @@ function is_add() {
     return is_get_request() && is_get_defined('action') && $_GET['action'] === 'add';
 }
 
-$template_url = '';
-$template_vars = [];
+
+$template_vars = [
+    'errors' => [],
+    'succeed_msgs' => [],
+    'selected_artists' => [],
+    'all_artists' => find_all_artists(),
+    'selected_categories' => [],
+    'all_categories' => get_all_categories(),
+    'mp3' => ['id' => '', 'url' => '', 'description'=>'', 'title' => '', 'duration' => '']
+
+];
 
 if (is_get_request()) {
 
     if (is_edit()) {
 
         $id = $_GET['id'];
-
-        $template_vars['errors'] = [];
-
-        $template_vars['succeed_msgs'] = [];
 
         $template_vars['selected_artists'] = get_selected_artists($id);
 
@@ -91,12 +96,9 @@ if (is_get_request()) {
 
     } elseif (is_add()) {
 
-        $template_url = '/template/template_edit_mp3.php';
-
     } else {
 
         $template_vars['mp3s'] =  get_mp3s();
-        $template_url = '/template/template_mp3.php';
 
     }
 }
@@ -146,11 +148,7 @@ if (is_post_request()) {
 
         $template_vars['selected_artists'] = get_selected_artists($mp3_id);
 
-        $template_vars['all_artists'] = find_all_artists();
-
         $template_vars['selected_categories'] = get_selected_categories($mp3_id);
-
-        $template_vars['all_categories'] = get_all_categories();
 
         // Find the mp3
         $template_vars['mp3'] = find_mp3_by_id($mp3_id);
@@ -159,7 +157,9 @@ if (is_post_request()) {
 
         $template_vars['succeed_msgs'] = $succeed_msgs;
 
-        $template_url = '/template/template_edit_mp3.php';
+
+    } else {
+        // add a new category
 
     }
 
@@ -169,7 +169,7 @@ if (is_post_request()) {
 $page_title = 'mp3';
 
 include(SHARED_PATH . '/public_header.php');
-include PUBLIC_PATH . $template_url;
+include PUBLIC_PATH . '/template/mp3.php';
 include(SHARED_PATH . '/public_footer.php');
 
 unset($template_vars);
