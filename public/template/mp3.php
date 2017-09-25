@@ -162,15 +162,25 @@
                                 <td><?php echo $result['title']; ?></td>
                                 <td>Title</td>
                                 <td>
-                                    <!--                                    <a href="manage_mp3.php?status_deactive_id=" title="Change Status"><span class="badge badge-success badge-icon"><i class="fa fa-check" aria-hidden="true"></i><span>Enable</span></span></a>
-                                    -->
-                                    <a href="mp3.php?status_active_id=" title="Change Status"><span
-                                                class="badge badge-danger badge-icon"><i class="fa fa-check"
-                                                                                         aria-hidden="true"></i><span>Disable </span></span></a>
+                                    <?php if ($result['active'] === '1') { ?>
+                                        <a href="mp3.php?status_deactivate_id=<?php echo $result['id']?>" title="Change Status">
+                                            <span class="badge badge-success badge-icon">
+                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                                <span>Enable</span>
+                                            </span>
+                                        </a>
+                                    <?php } else { // end if ?>
+                                        <a href="mp3.php?status_activate_id=<?php echo $result['id'];?>" title="Change Status">
+                                            <span class="badge badge-danger badge-icon">
+                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                                <span>Disable </span>
+                                            </span>
+                                        </a>
+                                    <?php } // end else ?>
                                 </td>
                                 <td><a href="mp3.php?action=edit&id=<?php echo $result['id'] ?>"
                                        class="btn btn-primary"><i class="fa fa-edit"></i></a>
-                                    <a href="?mp3_id=" class="btn btn-danger"
+                                    <a href="?action=delete&id=<?php echo $result['id']; ?>" class="btn btn-danger"
                                        onclick="return confirm('Are you sure you want to delete this song?');"><i
                                                 class="fa fa-trash"></i></a></td>
                             </tr>

@@ -70,6 +70,19 @@ function is_add()
     return is_get_request() && is_get_defined('action') && $_GET['action'] === 'add';
 }
 
+function is_delete()
+{
+    return is_get_request() && is_get_defined('action') && $_GET['action'] === 'delete';
+}
+
+
+function is_status_deactivate() {
+    return is_get_defined('status_deactivate_id') && $_GET['status_deactivate_id'] !== null;
+}
+
+function is_status_activate() {
+    return is_get_defined('status_activate_id') && $_GET['status_activate_id'] !== null;
+}
 
 $template_vars = [
     'errors' => [],
@@ -103,6 +116,27 @@ if (is_get_request()) {
 
     } elseif (is_add()) {
 
+    } elseif (is_status_deactivate()) {
+        $deactivate_status_id = $_GET['status_deactivate_id'];
+        $deactivate_status_id = db_escape($db, $deactivate_status_id);
+        $fields = ['id' => $deactivate_status_id, 'active' => 0];
+        if (update_table('mp3', $fields)) {
+            redirect_to(url_for('mp3.php'));
+        }
+    } elseif(is_status_activate()) {
+        $activate_status_id = $_GET['status_activate_id'];
+        $activate_status_id = db_escape($db, $activate_status_id);
+        $fields = ['id' => $activate_status_id, 'active' => 1];
+        if (update_table('mp3', $fields)) {
+            $succeed_msgs[] = 'Sucessfully activated';
+            redirect_to(url_for('mp3.php'));
+        }
+    } elseif (is_delete()) {
+        $id = $_GET['id'];
+        $id = db_escape($db, $id);
+        if (delete_from('mp3', 'id', $id)) {
+            redirect_to(url_for('mp3.php'));
+        }
     } else {
 
         $template_vars['mp3s'] = get_mp3s();
