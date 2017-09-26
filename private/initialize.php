@@ -14,6 +14,12 @@
 
   define('APP_NAME', 'APP_NAME');
 
+  // Permission constants
+  define('PERMISSION_EDIT', 'EDIT');
+  define('PERMISSION_DELETE', 'DELETE');
+  define('PERMISSION_UPDATE', 'UPDATE');
+  define('PERMISSION_CREATE', 'CREATE');
+
   // Assign the root URL to a PHP constant
   // * Do not need to include the domain
   // * Use same document root as webserver

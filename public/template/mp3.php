@@ -178,11 +178,19 @@
                                         </a>
                                     <?php } // end else ?>
                                 </td>
-                                <td><a href="mp3.php?action=edit&id=<?php echo $result['id'] ?>"
-                                       class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                <td>
+                                    <a href="mp3.php?action=edit&id=<?php echo $result['id'] ?>" class="btn btn-primary">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+
+                                    <?php if (has_permission(PERMISSION_DELETE)) { ?>
                                     <a href="?action=delete&id=<?php echo $result['id']; ?>" class="btn btn-danger"
-                                       onclick="return confirm('Are you sure you want to delete this song?');"><i
-                                                class="fa fa-trash"></i></a></td>
+                                       onclick="return confirm('Are you sure you want to delete this song?');">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                    <?php } // end has permission check ?>
+
+                                </td>
                             </tr>
                         <?php } // end while ?>
                         </tbody>

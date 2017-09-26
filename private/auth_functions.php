@@ -7,7 +7,35 @@
     $_SESSION['admin_id'] = $admin['id'];
     $_SESSION['last_login'] = time();
     $_SESSION['username'] = $admin['username'];
+    populate_user_roles();
     return true;
+  }
+
+  function populate_user_roles() {
+    global $db;
+    $sql = "SELECT r.* FROM role r INNER JOIN user_role ur ON ur.role_id = r.id WHERE ur.user_id = " . $_SESSION['admin_id'];
+    $results = mysqli_query($db, $sql);
+    $roles = [];
+    while ($result = mysqli_fetch_assoc($results)) {
+      $roles[] = $result;
+    }
+    mysqli_free_result($results);
+    $_SESSION['roles'] = $roles;
+  }
+
+  // Create 2D array of permission map
+  // Whenever we want to check the current user permission
+  // We first find the current role of user and map to
+  // to the available permission in Permission map
+  function has_permission($permission_type) {
+    $permission_map = [
+        'ADMIN' => [PERMISSION_EDIT, PERMISSION_DELETE, PERMISSION_UPDATE]
+    ];
+    foreach ($_SESSION['roles'] as $role) {
+      if ($role['name'] === 'ADMIN') {
+        return in_array($permission_type, $permission_map[$role['name']]);
+      }
+    }
   }
 
   // Performs all actions necessary to log out an admin
