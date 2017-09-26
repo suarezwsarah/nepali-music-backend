@@ -3,7 +3,7 @@
 
 <?php $page_title = 'artist';  ?>
 
-<?php $javascript_files = ['manage_artist']; // arrays of js file need for this script ?>
+<?php $javascript_files = ['artist']; // arrays of js file need for this script ?>
 
 <?php include(SHARED_PATH . '/public_header.php'); ?>
 

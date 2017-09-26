@@ -3,7 +3,7 @@ require_login();
 
 $page_title = 'categories';
 
-$javascript_files = ['manage_cat']; // arrays of js file need for this script
+$javascript_files = ['category']; // arrays of js file need for this script
 
 include(SHARED_PATH . '/public_header.php');
 
