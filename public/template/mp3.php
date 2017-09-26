@@ -153,7 +153,9 @@
                             <th>Category</th>
                             <th>Title</th>
                             <th>Status</th>
-                            <th class="cat_action_list">Action</th>
+                            <?php if (has_permission(PERMISSION_EDIT) || has_permission(PERMISSION_DELETE)) { ?>
+                                <th class="cat_action_list">Action</th>
+                            <?php } // end if ?>
                         </tr>
                         </thead>
                         <tbody>
@@ -178,10 +180,14 @@
                                         </a>
                                     <?php } // end else ?>
                                 </td>
+
+                                <?php if (has_permission(PERMISSION_EDIT) || has_permission(PERMISSION_DELETE)) { ?>
                                 <td>
+                                    <?php if (has_permission(PERMISSION_EDIT)) { ?>
                                     <a href="mp3.php?action=edit&id=<?php echo $result['id'] ?>" class="btn btn-primary">
                                         <i class="fa fa-edit"></i>
                                     </a>
+                                    <?php }  ?>
 
                                     <?php if (has_permission(PERMISSION_DELETE)) { ?>
                                     <a href="?action=delete&id=<?php echo $result['id']; ?>" class="btn btn-danger"
@@ -191,6 +197,8 @@
                                     <?php } // end has permission check ?>
 
                                 </td>
+                                <?php } ?>
+
                             </tr>
                         <?php } // end while ?>
                         </tbody>
