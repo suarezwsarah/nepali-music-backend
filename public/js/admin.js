@@ -2,6 +2,14 @@
 
 var app = angular.module('meromusic', []);
 
+var call = function (url,scope, callback) {
+    $.get(url, function (data, status) {
+        data = angular.fromJson(data);
+        callback(data);
+        scope.$apply();
+    })
+};
+
 app.controller('adminCtrl', function ($scope) {
 
     $scope.isHidePanel = false;
@@ -31,10 +39,10 @@ app.controller('adminCtrl', function ($scope) {
 
     $scope.editUser = function (userId) {
         $('#addAdminModal').modal('show');
-        $.get('ajax/ajax_admin.php?id='+userId, function (data, status) {
-            
-        });
-  /*      $.get('ajax/ajax_admin.php?type=user&id='+userId, function (data, status) {
+        call('ajax/ajax_admin.php?id='+userId, $scope, function (result) {
+            $scope.currentUser = result;
+        })
+ /*       $.get('ajax/ajax_admin.php?id='+userId, function (data, status) {
             $scope.currentUser = angular.fromJson(data);
             $scope.$apply();
         });*/
