@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="meromusic">
 <head>
     <title><?php if(isset($page_title)) { echo '- ' . h($page_title); } ?></title>
     <meta charset="utf-8">
@@ -11,6 +11,7 @@
     <script src="<?php echo url_for('/ckeditor/ckeditor.js')?>"></script>
     <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="<?php echo get_js('angular-1.6.4.min');?>"></script>
 
     <?php if (isset($javascript_files) && !empty($javascript_files)) { ?>
         <?php foreach ($javascript_files as $javascript_file) {  ?>
@@ -54,6 +55,12 @@
                 <li> <a href="<?php echo url_for('setting.php'); ?>">
                         <div class="icon"> <i class="fa fa-cog" aria-hidden="true"></i> </div>
                         <div class="title">Settings</div>
+                    </a>
+                </li>
+
+                <li class="<?php if ($page_title === 'admin') { echo 'active'; } ?>"> <a href="<?php echo url_for('admin.php'); ?>">
+                        <div class="icon"> <i class="fa fa-user" aria-hidden="true"></i> </div>
+                        <div class="title">Admin</div>
                     </a>
                 </li>
 
