@@ -70,12 +70,12 @@ if (is_post_request()) {
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/blue-sky.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/red.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo url_for('/stylesheets/theme/yellow.css'); ?>">
-    <script src="<?php echo get_js('jquery-3.2.1'); ?>"></script>
+    <script src="<?php echo get_js('angular-1.6.4.min'); ?>"></script>
     <script src="<?php echo url_for('/js/login.js'); ?>"></script>
 
 </head>
-<body>
-<div class="app app-default">
+<body ng-app="login">
+<div class="app app-default" ng-controller="loginCtrl">
     <div class="app-container app-login">
         <div class="flex-center">
             <div class="app-body">
@@ -102,16 +102,16 @@ if (is_post_request()) {
                             </div>
                             <div class="input-group"><span class="input-group-addon" id="basic-addon1"> <i
                                             class="fa fa-user" aria-hidden="true"></i></span>
-                                <input type="text" name="username" id="username" class="form-control"
+                                <input ng-model="form.username" type="text" name="username" id="username" class="form-control"
                                        placeholder="Username" aria-describedby="basic-addon1">
                             </div>
                             <div class="input-group"><span class="input-group-addon" id="basic-addon2"> <i
                                             class="fa fa-key" aria-hidden="true"></i></span>
-                                <input type="password" name="password" id="password" class="form-control"
+                                <input ng-model="form.password" type="password" name="password" id="password" class="form-control"
                                        placeholder="Password" aria-describedby="basic-addon2">
                             </div>
                             <div class="text-center">
-                                <input type="submit" id="btnLogin" class="btn btn-success btn-submit" value="Login">
+                                <input ng-disabled="isLoginBtnDisabled()" type="submit" id="btnLogin" class="btn btn-success btn-submit" value="Login"/>
                             </div>
                         </form>
                     </div>
