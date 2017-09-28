@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2017 at 03:45 AM
+-- Generation Time: Sep 28, 2017 at 03:00 AM
 -- Server version: 5.7.14
 -- PHP Version: 7.0.10
 
@@ -53,17 +53,17 @@ CREATE TABLE `artist` (
   `id` int(11) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
-  `active` tinyint(4) NOT NULL
+  `active` tinyint(4) NOT NULL,
+  `img_url` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `artist`
 --
 
-INSERT INTO `artist` (`id`, `first_name`, `last_name`, `active`) VALUES
-  (1, 'Udit Narayan', 'Jha', 1),
-  (2, 'Sadhana', 'Sargam', 1),
-  (3, 'Melina', 'Rai', 1);
+INSERT INTO `artist` (`id`, `first_name`, `last_name`, `active`, `img_url`) VALUES
+  (27, 'Sam', 'Dahal', 1, '/meromusic/public/images/thumbs/rajesh.jpg'),
+  (26, 'Juma', 'Artist', 1, '/meromusic/public/images/thumbs/jhuma.jpg');
 
 -- --------------------------------------------------------
 
@@ -81,12 +81,11 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`id`, `name`) VALUES
-  (1, 'Modern'),
-  (2, 'Rock'),
-  (3, 'ninja'),
-  (4, 'Modern'),
-  (5, 'Modern'),
-  (6, 'Pop');
+  (37, 'testla5050\n        '),
+  (38, 'teste'),
+  (32, 'Punkninja\n        '),
+  (35, 'Testn'),
+  (39, 'kjjkj;');
 
 -- --------------------------------------------------------
 
@@ -124,21 +123,32 @@ CREATE TABLE `log_audit` (
 --
 
 INSERT INTO `log_audit` (`id`, `log_level`, `log_text`) VALUES
-  (46, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (47, 'INFO', 'sdahal1995 updated artists'),
-  (48, 'INFO', 'sdahal1995 updated category for mp3 id 1'),
-  (49, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (50, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (51, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (52, 'SQL', 'UPDATE mp3 SET url = \'www.yahoo.com.mp3\' duration = \'\' WHERE id = 1 LIMIT 1'),
-  (53, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (54, 'SQL', 'UPDATE mp3 SET url = \'www.yahoo.com.mp3\' duration = \'4:20\' WHERE id = 1 LIMIT 1'),
-  (55, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (56, 'SQL', 'UPDATE mp3 SET url = \'www.yahoo.com.mp3\' ,duration = \'4:20\' ,WHERE id = 1 LIMIT 1'),
-  (57, 'ERROR', 'User entered edit_mp3.php page but no paramater of id was set'),
-  (58, 'SQL', 'UPDATE mp3 SET url = \'ramsing.mp3\' ,duration = \'4:20\' WHERE id = 1 LIMIT 1'),
-  (59, 'INFO', 'sdahal1995 updated artists'),
-  (60, 'INFO', 'sdahal1995 updated category for mp3 id 1');
+  (2291, 'INFO', 'SELECT * FROM admin WHERE id=\'1\''),
+  (2292, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2293, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2294, 'INFO', 'SELECT * FROM admins WHERE id=\'2\''),
+  (2295, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2296, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2297, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2298, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2299, 'INFO', 'SELECT * FROM category'),
+  (2300, 'INFO', 'SELECT * FROM category WHERE name LIKE \'k%\''),
+  (2301, 'INFO', 'SELECT * FROM category'),
+  (2302, 'INFO', 'SELECT * FROM artist'),
+  (2303, 'INFO', 'SELECT * FROM artist'),
+  (2304, 'INFO', 'SELECT * FROM category'),
+  (2305, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2306, 'INFO', 'SELECT * FROM admins WHERE id=\'2\''),
+  (2307, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2308, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2309, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2310, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2311, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2312, 'INFO', 'SELECT * FROM admins WHERE id=\'2\''),
+  (2313, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2314, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2315, 'INFO', 'SELECT * FROM admins WHERE id=\'1\''),
+  (2316, 'URL', 'http://localhost/meromusic/public/admin.php');
 
 -- --------------------------------------------------------
 
@@ -151,16 +161,21 @@ CREATE TABLE `mp3` (
   `title` varchar(255) NOT NULL,
   `url` varchar(255) NOT NULL,
   `duration` varchar(10) NOT NULL,
-  `description` text NOT NULL
+  `description` text NOT NULL,
+  `active` tinyint(1) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `mp3`
 --
 
-INSERT INTO `mp3` (`id`, `title`, `url`, `duration`, `description`) VALUES
-  (1, 'Banmara le', 'ramsing.mp3', '4:20', 'THis is sample'),
-  (2, 'Kodo fulyo', 'google.com', '3:40', 'this is sample');
+INSERT INTO `mp3` (`id`, `title`, `url`, `duration`, `description`, `active`) VALUES
+  (1, 'Banmara le', 'ramsing.mp3', '4:20', '&lt;p&gt;lula lampurdfdsfsd upate&lt;/p&gt;\r\n', 1),
+  (2, 'Kodo fulyo', 'google.com.mp3', '3:40', '&lt;p&gt;this is samplesadfdsfadsf&lt;/p&gt;\r\n', 1),
+  (3, 'HEy maya', 'dfadfds.mp3', '3:02', '&lt;p&gt;fsdfadsfsdfasd&lt;/p&gt;\r\n', 1),
+  (4, 'test test', 'nnn.mp3', '4:45', '&lt;p&gt;fsdfdsfsdfsdfasdf&lt;/p&gt;\r\n', 1),
+  (5, 'test 20', 'fsdfds.mp3', '4:60', '&lt;p&gt;dsfdsfdsfsdfd&lt;/p&gt;\r\n', 1),
+  (6, 'ninja23', 'fsdfdfs.mp3', '7:80', '&lt;p&gt;sdfasdfasdfsd&lt;/p&gt;\r\n', 1);
 
 -- --------------------------------------------------------
 
@@ -179,7 +194,13 @@ CREATE TABLE `mp3_artist` (
 --
 
 INSERT INTO `mp3_artist` (`id`, `mp3_id`, `artist_id`) VALUES
-  (1, 1, 1);
+  (9, 2, 26),
+  (8, 1, 26),
+  (10, 1, 27),
+  (11, 4, 27),
+  (12, 5, 26),
+  (13, 6, 27),
+  (14, 7, 26);
 
 -- --------------------------------------------------------
 
@@ -198,8 +219,14 @@ CREATE TABLE `mp3_category` (
 --
 
 INSERT INTO `mp3_category` (`id`, `mp3_id`, `category_id`) VALUES
-  (1, 1, 1),
-  (6, 1, 2);
+  (8, 1, 35),
+  (10, 1, 37),
+  (9, 2, 32),
+  (2, 2, 35),
+  (11, 4, 37),
+  (12, 5, 37),
+  (13, 6, 38),
+  (14, 7, 32);
 
 -- --------------------------------------------------------
 
@@ -238,6 +265,25 @@ INSERT INTO `pages` (`id`, `subject_id`, `menu_name`, `position`, `visible`, `co
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `role`
+--
+
+CREATE TABLE `role` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`id`, `name`) VALUES
+  (1, 'ADMIN'),
+  (2, 'AUTHOR');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `subjects`
 --
 
@@ -257,6 +303,25 @@ INSERT INTO `subjects` (`id`, `menu_name`, `position`, `visible`) VALUES
   (2, 'Consumer', 2, 1),
   (3, 'Small Business', 3, 0),
   (5, 'Commercial', 4, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_role`
+--
+
+CREATE TABLE `user_role` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user_role`
+--
+
+INSERT INTO `user_role` (`id`, `user_id`, `role_id`) VALUES
+  (3, 2, 1);
 
 --
 -- Indexes for dumped tables
@@ -320,9 +385,21 @@ ALTER TABLE `pages`
   ADD KEY `fk_subject_id` (`subject_id`);
 
 --
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `subjects`
 --
 ALTER TABLE `subjects`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user_role`
+--
+ALTER TABLE `user_role`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -338,12 +415,12 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `artist`
 --
 ALTER TABLE `artist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 --
 -- AUTO_INCREMENT for table `config`
 --
@@ -353,32 +430,42 @@ ALTER TABLE `config`
 -- AUTO_INCREMENT for table `log_audit`
 --
 ALTER TABLE `log_audit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2317;
 --
 -- AUTO_INCREMENT for table `mp3`
 --
 ALTER TABLE `mp3`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `mp3_artist`
 --
 ALTER TABLE `mp3_artist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `mp3_category`
 --
 ALTER TABLE `mp3_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `pages`
 --
 ALTER TABLE `pages`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
+-- AUTO_INCREMENT for table `role`
+--
+ALTER TABLE `role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
 -- AUTO_INCREMENT for table `subjects`
 --
 ALTER TABLE `subjects`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT for table `user_role`
+--
+ALTER TABLE `user_role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
